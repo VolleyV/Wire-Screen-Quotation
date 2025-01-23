@@ -253,11 +253,6 @@ export default function Home() {
           </tbody>
         </table>
       </div>
-<<<<<<< HEAD
-      {/* Corrected Link component */}
-      <Link href="/pages/test" className="text-3xl font-bold underline">Go to Home (Link Component)</Link>
-=======
->>>>>>> 5eafa5cae7b7e3d4f6ba782ccbf4b53e012dbc5b
     </div>
   );
 }
