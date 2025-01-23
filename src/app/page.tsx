@@ -10,6 +10,11 @@ export default function Home() {
     name: "",
   });
 
+  const [atisSeries, setAtisSeries] = useState({
+    id: "",
+    type: "",
+  });
+
   const handleNavigation = () => {
     router.push("/home"); // Navigate programmatically to /home
   };
@@ -111,7 +116,7 @@ export default function Home() {
               className="block text-blueGray-600 text-base font-bold mb-2"
               htmlFor="grid-password"
             >
-              Company
+              Phone
             </label>
             <input
               type="text"
@@ -166,7 +171,8 @@ export default function Home() {
         </div>
       </form>
 
-      <div className="overflow x-auto">
+      <div className="overflow x-auto px-4">
+        <h1 className="text-2xl font-bold mt-4">ATISSSS</h1>
         <table className="table-auto border-collapse border border-gray-300 w-full text-sm">
           <thead>
             <tr className="bg-teal-500 text-white">
@@ -209,7 +215,10 @@ export default function Home() {
                 <input type="checkbox" className="form-checkbox h-5 w-5" />
               </td>
               <td className="border border-gray-300 px-4 py-2">
-                <select className="border rounded px-2 py-1 w-full"></select>
+                <select className="border rounded px-2 py-1 w-full">
+                  <option>กระจกเขียวตัดแสง 6มม</option>
+                  <option>กระจกใส 5มม</option>
+                </select>
               </td>
               <td className="border border-gray-300 px-4 py-2">
                 <select className="border rounded px-2 py-1 w-full">
