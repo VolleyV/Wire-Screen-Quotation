@@ -1,4 +1,4 @@
-import { useRouter } from "next/navigation"; // Correct import for App Router
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import Link from "next/link";
 
 
