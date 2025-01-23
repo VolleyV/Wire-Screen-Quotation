@@ -18,7 +18,7 @@ export default function Home() {
       <button onClick={handleNavigation} className="rounded" color="black">Go to Home</button>
       </div>
       {/* Corrected Link component */}
-      <Link href="/home" className="text-3xl font-bold underline">Go to Home (Link Component)</Link>
+      <Link href="/pages/test" className="text-3xl font-bold underline">Go to Home (Link Component)</Link>
     </div>
   );
 }
