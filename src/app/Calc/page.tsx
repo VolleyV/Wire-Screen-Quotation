@@ -2,11 +2,10 @@
 import React from "react";
 import { useEffect, useState } from "react";
 
-const page = () => {
+const Page = () => {  // Change 'page' to 'Page'
   const [slidingWindowData, setSlidingWindowData] = useState([]);
 
   useEffect(() => {
-    // ดึงข้อมูลจาก sessionStorage
     const storedData = sessionStorage.getItem("slidingWindowData");
     if (storedData) {
       setSlidingWindowData(JSON.parse(storedData));
@@ -66,107 +65,8 @@ const page = () => {
           ))}
         </tbody>
       </table>
-
-      <div className="flex justify-between mt-4 px-4 text-lg">
-        <div className="text-left">
-          <p>พื้นที่ประตูหน้าต่าง 48.00 ตารางเมตร</p>
-          <p>พื้นที่มุ้ง 0.00 ตารางเมตร</p>
-          <p className="font-bold text-xl">รวมพื้นที่ทั้งหมด 48.00 ตารางเมตร</p>
-        </div>
-        <div className="border-l border-gray-500"></div>
-        <div className="text-right font-bold ">
-          <p>ค่าสินค้า 17,808.00 บาท</p>
-          <p>ค่าติดตั้ง 28,800.00 บาท</p>
-          <p className="text-xl text-red-500">รวม 46,608.00 บาท</p>
-        </div>
-      </div>
-      <div className="border-t border-gray-500 mt-4"></div>
-      <div className="flex mt-4 px-4">
-        <div className="w-2/5">
-          <div className="flex items-center">
-            <input type="checkbox" id="checkbox1" className="w-4 h-4" />
-            <label htmlFor="checkbox1" className="ml-2">
-              ราคารวมค่าติดตั้ง
-            </label>
-          </div>
-          <div className="flex items-center">
-            <input type="checkbox" id="checkbox2" className="w-4 h-4" />
-            <label htmlFor="checkbox2" className="ml-2">
-              ราคารวมค่าติดตั้งมุ้ง
-            </label>
-          </div>
-          <div className="flex items-center">
-            <input type="checkbox" id="checkbox3" className="w-4 h-4" />
-            <label htmlFor="checkbox3" className="ml-2">
-              ราคารวม VAT 7%
-            </label>
-          </div>
-          <div className="flex items-center">
-            <input type="checkbox" id="checkbox4" className="w-4 h-4" />
-            <label htmlFor="checkbox4" className="ml-2">
-              คำนวณ VAT 7%
-            </label>
-          </div>
-          <div className="flex items-center">
-            <input type="checkbox" id="checkbox5" className="w-4 h-4" />
-            <label htmlFor="checkbox5" className="ml-2">
-              โชว์ข้อมูลบัญชีโอนเงิน
-            </label>
-          </div>
-          <div className="flex items-center">
-            <input type="checkbox" id="checkbox6" className="w-4 h-4" />
-            <label htmlFor="checkbox6" className="ml-2">
-              บวก 5% มุ้งลวด
-            </label>
-          </div>
-          <div className="flex items-center">
-            <input type="checkbox" id="checkbox7" className="w-4 h-4" />
-            <label htmlFor="checkbox1" className="ml-2">
-              กรณีพิเศษ สินค้า +10%
-            </label>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-4">
-          <div>
-            <label>ส่วนลดค่าสินค้า (%)</label>
-            <input
-              className="border border-gray-300 text-gray-900 rounded-lg p-1"
-              placeholder="%"
-            />
-          </div>
-          <div>
-            <label>ส่วนลดค่าสินค้า (%)</label>
-            <input
-              className="border border-gray-300 text-gray-900 rounded-lg p-1"
-              placeholder="%"
-            />
-          </div>
-          <div>
-            <label>ส่วนลดค่าสินค้า (%)</label>
-            <input
-              className="border border-gray-300 text-gray-900 rounded-lg p-1"
-              placeholder="%"
-            />
-          </div>
-          <div>
-            <label>ส่วนลดค่าสินค้า (%)</label>
-            <input
-              className="border border-gray-300 text-gray-900 rounded-lg p-1"
-              placeholder="%"
-            />
-          </div>
-          <div>
-            <label>ส่วนลดค่าสินค้า (%)</label>
-            <input
-              className="border border-gray-300 text-gray-900 rounded-lg p-1"
-              placeholder="%"
-            />
-          </div>
-        </div>
-      </div>
     </div>
   );
 };
 
-export default page;
+export default Page;  // Change 'page' to 'Page'
