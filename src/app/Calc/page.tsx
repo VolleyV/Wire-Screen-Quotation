@@ -1,14 +1,22 @@
 "use client";
-import React from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
-const Page = () => {  // Change 'page' to 'Page'
-  const [slidingWindowData, setSlidingWindowData] = useState([]);
+interface SlidingWindowData {
+  id: number;
+  type: string;
+  glass: string;
+  width: number;
+  height: number;
+  qty: number;
+}
+
+const Page = () => {  
+  const [slidingWindowData, setSlidingWindowData] = useState<SlidingWindowData[]>([]);
 
   useEffect(() => {
     const storedData = sessionStorage.getItem("slidingWindowData");
     if (storedData) {
-      setSlidingWindowData(JSON.parse(storedData));
+      setSlidingWindowData(JSON.parse(storedData) as SlidingWindowData[]);
     }
   }, []);
 
@@ -69,4 +77,4 @@ const Page = () => {  // Change 'page' to 'Page'
   );
 };
 
-export default Page;  // Change 'page' to 'Page'
+export default Page;
