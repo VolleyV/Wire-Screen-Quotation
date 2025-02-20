@@ -1,5 +1,6 @@
 import React from "react";
 import { useState } from "react";
+import { useEffect } from "react";
 import { ToastContainer, toast, Zoom } from "react-toastify";
 
 const SlidingWindow = () => {
@@ -30,11 +31,32 @@ const SlidingWindow = () => {
       },
     ]);
   };
+  useEffect(() => {
+    if (slidingWindow && slidingWindow.length > 0) {
+      console.log("Saving sliding window data:", slidingWindow);
+      sessionStorage.setItem(
+        "slidingWindowData",
+        JSON.stringify(slidingWindow)
+      );
+    }
+  }, [slidingWindow]); // Keep track of slidingWindow state
 
   const handleRemoveSlidingWindowRow = (index: number) => {
     const updatedRows = slidingWindow.filter((_, i) => i !== index);
     setSlidingWindow(updatedRows);
   };
+
+  const windowTypes = [
+    { label: "Select Type", value: "" },
+    { label: "W2 (W6000 x H3200)", value: "W2" },
+    { label: "Demo", value: "Demo" },
+  ];
+
+  /*   const glassOptions = [
+    { label: "Select Glass", value: "" },
+    { label: "W2 (W6000 x H3200)", value: "W2" },
+    { label: "Demo", value: "Demo" },
+  ]; */
 
   const handleInputChange = (
     index: number,
@@ -46,43 +68,95 @@ const SlidingWindow = () => {
     );
     setSlidingWindow(updatedRows);
   };
-
-  const handleSubmit = () => {
+  //const checkPrice = () => {};
+  const handleSubmit = async () => {
     if (isChecked) {
       const isDataComplete = slidingWindow.every((row) => {
         return (
           row.id.trim() !== "" &&
           row.type.trim() !== "" &&
           row.glass.trim() !== "" &&
-          row.width.trim() !== "" &&
-          row.height.trim() !== "" &&
-          row.qty.trim() !== ""
+          (row.width.toString().trim() !== "") &&  // Convert to string and trim
+          (row.height.toString().trim() !== "") && // Convert to string and trim
+          (row.qty.toString().trim() !== "")       // Convert to string and trim
         );
       });
-
+  
       if (!isDataComplete) {
-        toast.warn("กรอกข้อมูล Sliding Window ให้ครบ", {
-          position: "top-center",
-          autoClose: 1500,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Zoom,
-        });
+        toast.error("กรุณากรอกข้อมูลให้ครบถ้วน (รวมถึงจำนวนสินค้า)");
         return;
       }
-
-      sessionStorage.setItem(
-        "slidingWindowData",
-        JSON.stringify(slidingWindow)
+  
+      // Fetch price for each row
+      const updatedRows = await Promise.all(
+        slidingWindow.map(async (row) => {
+          const validTypes = ["W2", "Demo", "Type3", "Type4", "Type5"]; // Allowed types
+  
+          if (!validTypes.includes(row.type)) {
+            toast.error(`ไม่สามารถคำนวณราคาได้สำหรับ Type: ${row.type}`);
+            return;
+          }
+          try {
+            const response = await fetch(
+              `/api/calculate-price?width=${row.width}&height=${row.height}`
+            );
+            console.log(response);
+            console.log(row.qty);
+            const result = await response.json();
+  
+            if (response.ok && result.data.length > 0) {
+              return { ...row, price: result.data[0].price };
+            }
+            if (row.qty == null || row.qty == "") {
+              toast.error(`กรุณาใส่จำนวนสินค้า`);
+            } else {
+              toast.error(`ไม่พบราคาสำหรับ W: ${row.width}, H: ${row.height}`, {
+                autoClose: 2000,
+              });
+              return { ...row, price: "N/A" }; // Handle missing price
+            }
+          } catch (error) {
+            console.error("Error fetching price:", error);
+            return { ...row, price: "Error" };
+          }
+        })
       );
-
-      window.open("/Calc", "_blank");
+  
+      sessionStorage.setItem("slidingWindowData", JSON.stringify(updatedRows));
+      setTimeout(() => {
+        window.open("/Calc", "_blank");
+      }, 500); // Adjust delay as needed
     } else {
-      window.open("/Calc", "_blank");
+      toast.error("กรุณาติ๊กถูกหลายการที่จะสร้างใบเสนอราคา");
+    }
+  };
+  
+  const checkPrice = async (index) => {
+    const row = slidingWindow[index];
+
+    if (!row.width || !row.height) return;
+    const validTypes = ["W2", "Demo", "Type3", "Type4", "Type5"]; // Allowed types
+
+    if (!validTypes.includes(row.type)) {
+      toast.error(`ไม่สามารถคำนวณราคาได้สำหรับ Type: ${row.type}`);
+      return;
+    }
+    try {
+      const response = await fetch(
+        `/api/calculate-price?width=${row.width}&height=${row.height}`
+      );
+      const result = await response.json();
+      console.log("API Response:", result);
+      if (response.ok && result.data.length > 0) {
+        handleInputChange(index, "price", result.data[0].price);
+        toast.success(`พบราคาสำหรับ W: ${row.width}, H: ${row.height}`);
+      } else {
+        handleInputChange(index, "price", "N/A");
+        toast.error(`ไม่พบราคาสำหรับ W: ${row.width}, H: ${row.height}`);
+      }
+    } catch (error) {
+      console.error("Error fetching price:", error);
+      handleInputChange(index, "price", "Error");
     }
   };
 
@@ -112,7 +186,7 @@ const SlidingWindow = () => {
               Type
             </th>
             <th className="border border-gray-300 px-4 py-2" rowSpan={2}>
-              กระจก
+              Glass
             </th>
             <th className="border border-gray-300 px-4 py-2" colSpan={2}>
               ขนาด
@@ -163,9 +237,11 @@ const SlidingWindow = () => {
                   }
                   className="border rounded px-2 py-1 w-full"
                 >
-                  <option value="">Select Type</option>
-                  <option>กระจกเขียวตัดแสง 6มม</option>
-                  <option>กระจกใส 5มม</option>
+                  {windowTypes.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
                 </select>
               </td>
               <td className="border border-gray-300 px-4 py-2">
@@ -177,29 +253,31 @@ const SlidingWindow = () => {
                   className="border rounded px-2 py-1 w-full"
                 >
                   <option value="">Select Glass</option>
-                  <option value="green_6mm">กระจกเขียวตัดแสง 6มม</option>
-                  <option value="clear_5mm">กระจกใส 5มม</option>
+                  <option value="W2">W2 (W6000 x H3200)</option>
+                  <option value="Demo">Demo</option>
                 </select>
               </td>
               <td className="border border-gray-300 px-4 py-2 w-28">
                 <input
-                  type="text"
+                  type="number"
                   value={row.width}
-                  onChange={(e) =>
-                    handleInputChange(index, "width", e.target.value)
-                  }
+                  onBlur={() => checkPrice(index)}
                   placeholder="W"
+                  onChange={(e) =>
+                    handleInputChange(index, "width", Number(e.target.value))
+                  }
                   className="border rounded px-2 py-1 w-full"
                 />
               </td>
               <td className="border border-gray-300 px-4 py-2 w-28">
                 <input
-                  type="text"
+                  type="number"
                   value={row.height}
-                  onChange={(e) =>
-                    handleInputChange(index, "height", e.target.value)
-                  }
+                  onBlur={() => checkPrice(index)}
                   placeholder="H"
+                  onChange={(e) =>
+                    handleInputChange(index, "height", Number(e.target.value))
+                  }
                   className="border rounded px-2 py-1 w-full"
                 />
               </td>

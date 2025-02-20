@@ -4,6 +4,12 @@ import { useState } from "react";
 const InputInfo = () => {
   const [formData, setFormData] = useState({
     name: "",
+    attention:"",
+    phone:"",
+    project:"",
+    address:"",
+    company:"",
+    quote:""
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -23,10 +29,10 @@ const InputInfo = () => {
             </label>
             <input
               type="text"
-              value={formData.name}
+              value={formData.attention}
               className="border px-2 py-2 rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
               onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
+                setFormData({ ...formData, attention: e.target.value })
               }
             />
           </div>
@@ -39,10 +45,10 @@ const InputInfo = () => {
             </label>
             <input
               type="text"
-              value={formData.name}
+              value={formData.company}
               className="border px-2 py-2 rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
               onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
+                setFormData({ ...formData, company: e.target.value })
               }
             />
           </div>
@@ -51,14 +57,14 @@ const InputInfo = () => {
               className="block text-blueGray-600 text-base font-bold mb-2"
               htmlFor="grid-password"
             >
-              Place
+              Adress
             </label>
             <input
               type="text"
-              value={formData.name}
+              value={formData.address}
               className="border px-2 py-2 rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
               onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
+                setFormData({ ...formData, address: e.target.value })
               }
             />
           </div>
@@ -67,14 +73,14 @@ const InputInfo = () => {
               className="block text-blueGray-600 text-base font-bold mb-2"
               htmlFor="grid-password"
             >
-              เขียนใบเสนอ
+              Telephone Number
             </label>
             <input
               type="text"
-              value={formData.name}
+              value={formData.phone}
               className="border px-2 py-2 rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
               onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
+                setFormData({ ...formData, phone: e.target.value })
               }
             />
           </div>
@@ -90,10 +96,10 @@ const InputInfo = () => {
             </label>
             <input
               type="text"
-              value={formData.name}
+              value={formData.project}
               className="border px-2 py-2 rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
               onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
+                setFormData({ ...formData, project: e.target.value })
               }
             />
           </div>
@@ -106,7 +112,7 @@ const InputInfo = () => {
             </label>
             <input
               type="text"
-              value={formData.name}
+              value={formData.phone}
               className="border px-2 py-2 rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
               onChange={(e) =>
                 setFormData({ ...formData, name: e.target.value })
@@ -118,7 +124,7 @@ const InputInfo = () => {
               className="block text-blueGray-600 text-base font-bold mb-2"
               htmlFor="grid-password"
             >
-              Place
+              Adress
             </label>
             <input
               type="text"
