@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quotation Generator</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f7f7f7;
+      color: #333;
+    }
+    .container {
+      width: 80%;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+      font-size: 28px;
+      color: #0047b3;
+      margin-bottom: 20px;
+    }
+    label {
+      font-size: 14px;
+      margin: 10px 0 5px;
+      display: block;
+      color: #444;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    button {
+      padding: 12px 25px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #0047b3;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      width: 100%;
+    }
+    button:hover {
+      background-color: #003b8a;
+    }
+    .pdf-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    .pdf-table th, .pdf-table td {
+      padding: 12px;
+      text-align: left;
+      border: 1px solid #ddd;
+    }
+    .pdf-table th {
+      background-color: #0047b3;
+      color: white;
+    }
+    .pdf-table td {
+      background-color: #f9f9f9;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 12px;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Quotation Generator</h1>
+    
+    <label for="name">Name:</label>
+    <input type="text" id="name" placeholder="Enter Name">
+    
+    <label for="width">Width (cm):</label>
+    <input type="number" id="width" placeholder="Enter Width">
+    
+    <label for="height">Height (cm):</label>
+    <input type="number" id="height" placeholder="Enter Height">
+    
+    <label for="price">Price ($):</label>
+    <input type="number" id="price" placeholder="Enter Price">
+    
+    <button onclick="generateQuotation()">Generate Quotation</button>
+  </div>
+
+  <script>
+    function generateQuotation() {
+      const name = document.getElementById("name").value;
+      const width = document.getElementById("width").value;
+      const height = document.getElementById("height").value;
+      const price = document.getElementById("price").value;
+
+      if (!name || !width || !height || !price) {
+        alert("Please fill in all the fields.");
+        return;
+      }
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      // Add Header
+      doc.setFontSize(18);
+      doc.setTextColor(0, 71, 179);
+      doc.text("Quotation", 105, 20, { align: "center" });
+
+      // Add Date
+      doc.setFontSize(12);
+      doc.setTextColor(0, 0, 0);
+      doc.text("Date: " + new Date().toLocaleDateString(), 105, 30, { align: "center" });
+
+      // Add the table headers
+      doc.setFontSize(12);
+      doc.setTextColor(0, 0, 0);
+      doc.text("Name", 20, 50);
+      doc.text("Width (cm)", 60, 50);
+      doc.text("Height (cm)", 100, 50);
+      doc.text("Price ($)", 140, 50);
+
+      // Add a table with a border and data
+      doc.setFontSize(12);
+      doc.text(name, 20, 60);
+      doc.text(width, 60, 60);
+      doc.text(height, 100, 60);
+      doc.text(price, 140, 60);
+
+      // Add a footer with a thank you note
+      doc.setFontSize(10);
+      doc.text("Thank you for your business!", 105, 270, { align: "center" });
+
+      // Open the PDF in a new tab
+      window.open(doc.output("bloburl"));
+    }
+  </script>
+
+</body>
+</html>

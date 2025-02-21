@@ -76,22 +76,22 @@ const SlidingWindow = () => {
           row.id.trim() !== "" &&
           row.type.trim() !== "" &&
           row.glass.trim() !== "" &&
-          (row.width.toString().trim() !== "") &&  // Convert to string and trim
-          (row.height.toString().trim() !== "") && // Convert to string and trim
-          (row.qty.toString().trim() !== "")       // Convert to string and trim
+          row.width.toString().trim() !== "" && // Convert to string and trim
+          row.height.toString().trim() !== "" && // Convert to string and trim
+          row.qty.toString().trim() !== "" // Convert to string and trim
         );
       });
-  
+
       if (!isDataComplete) {
         toast.error("กรุณากรอกข้อมูลให้ครบถ้วน (รวมถึงจำนวนสินค้า)");
         return;
       }
-  
+
       // Fetch price for each row
       const updatedRows = await Promise.all(
         slidingWindow.map(async (row) => {
           const validTypes = ["W2", "Demo", "Type3", "Type4", "Type5"]; // Allowed types
-  
+
           if (!validTypes.includes(row.type)) {
             toast.error(`ไม่สามารถคำนวณราคาได้สำหรับ Type: ${row.type}`);
             return;
@@ -103,7 +103,7 @@ const SlidingWindow = () => {
             console.log(response);
             console.log(row.qty);
             const result = await response.json();
-  
+
             if (response.ok && result.data.length > 0) {
               return { ...row, price: result.data[0].price };
             }
@@ -121,7 +121,21 @@ const SlidingWindow = () => {
           }
         })
       );
-  
+      const storedFormData = sessionStorage.getItem("quotationFormData");
+      const quotationFormData = storedFormData
+        ? JSON.parse(storedFormData)
+        : {}; // Default to empty object if not found
+
+      sessionStorage.setItem("slidingWindowData", JSON.stringify(updatedRows));
+
+      // Pass both slidingWindowData and quotationFormData to Calc page (via sessionStorage)
+      sessionStorage.setItem(
+        "combinedQuotationData",
+        JSON.stringify({
+          slidingWindowData: updatedRows,
+          quotationFormData: quotationFormData,
+        })
+      );
       sessionStorage.setItem("slidingWindowData", JSON.stringify(updatedRows));
       setTimeout(() => {
         window.open("/Calc", "_blank");
@@ -130,7 +144,7 @@ const SlidingWindow = () => {
       toast.error("กรุณาติ๊กถูกหลายการที่จะสร้างใบเสนอราคา");
     }
   };
-  
+
   const checkPrice = async (index) => {
     const row = slidingWindow[index];
 
@@ -171,7 +185,7 @@ const SlidingWindow = () => {
             setIsChecked(!isChecked);
           }}
         />
-        <h1 className="text-2xl font-bold ml-2">Sliding Window</h1>
+        <h1 className="text-2xl font-bold ml-2">W2</h1>
       </div>
       <table className="table-auto border-collapse border border-gray-300 w-full text-sm">
         <thead>

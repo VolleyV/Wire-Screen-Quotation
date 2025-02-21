@@ -10,70 +10,85 @@ interface SlidingWindowData {
   qty: number;
   price?: number | string; // Make sure price is optional to prevent errors
 }
+interface QuotationFormData {
+  // Define interface for form data
+  attention: string;
+  company: string;
+  address: string;
+  place: string;
+  project: string;
+  phone: string;
+  quote: string;
+}
+interface CombinedQuotationData {
+  slidingWindowData: SlidingWindowData[];
+  quotationFormData: QuotationFormData;
+}
 
 const Page = () => {
   const [slidingWindowData, setSlidingWindowData] = useState<
     SlidingWindowData[]
   >([]);
+  const [quotationFormData, setQuotationFormData] = useState<QuotationFormData | null>(null); // State for form data
 
   useEffect(() => {
-    console.log(slidingWindowData);
-    const storedData = sessionStorage.getItem("slidingWindowData");
-    if (storedData) {
-      setSlidingWindowData(JSON.parse(storedData) as SlidingWindowData[]);
-    }
+    const storedCombinedData = sessionStorage.getItem("combinedQuotationData");
+    if (storedCombinedData) {
+      const combinedData = JSON.parse(storedCombinedData) as CombinedQuotationData;
+      setSlidingWindowData(combinedData.slidingWindowData);
+      setQuotationFormData(combinedData.quotationFormData); // Set form data state
+      console.log("Combined Data from sessionStorage:", combinedData); // Log combined data
+    } 
   }, []);
   const previewQuotation = async () => {
-    const storedData = sessionStorage.getItem("slidingWindowData");
-    if (!storedData || JSON.parse(storedData).length === 0) {
-      console.error("No sliding window data found!");
-      alert("No sliding window data found! Please submit first.");
-      return;
-    }
-    if (slidingWindowData.length === 0) {
-      console.error("No customer data available.");
-      return;
-    }
-
-    const customerId = slidingWindowData[0].id;
-
-    if (!customerId) {
-      console.error("No customer ID found.");
-      return;
-    }
+    // ... (get slidingWindowData from sessionStorage)
 
     try {
       const response = await fetch("/api/create-quotation", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ customerId }),
+        body: JSON.stringify({
+          slidingWindowData: slidingWindowData, // Send slidingWindowData
+          quotationFormData: quotationFormData // Send quotationFormData
+        }),
       });
-
       if (!response.ok) {
-        throw new Error(`Server responded with status ${response.status}`);
+        // Error handling (still get error details as JSON if API sends it for errors)
+        const errorData = await response.json();
+        console.error("Failed to create quotation:", errorData);
+        alert(
+          `Failed to create quotation: ${errorData.error || "Unknown error"}`
+        );
+        return;
       }
 
-      const text = await response.text();
-      console.log("Raw response:", text); // Debugging
+      // **No response.json() here!** - We expect a PDF download, not JSON
+      // **Handle PDF download - get blob and create download link (as in your original code)**
 
-      if (!text) {
-        throw new Error("Empty response from server");
-      }
-
-      const data = JSON.parse(text);
-
-      if (data.pdfUrl) {
-        window.open(data.pdfUrl, "_blank");
-      } else {
-        console.error("Failed to get PDF URL");
-      }
+      const blob = await response.blob(); // Get response as Blob (binary data)
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "test-quotation.pdf"; // Or 'test-quotation.pdf' now
+      link.click();
     } catch (error) {
       console.error("Error fetching PDF:", error);
     }
   };
-
   return (
     <div className="container mx-auto px-4 py-4">
+         {quotationFormData && (
+          <div className="mb-4">
+            <h2 className="text-lg font-bold mb-2">Quotation Information</h2>
+            <p>Attention: {quotationFormData.attention}</p>
+            <p>Company: {quotationFormData.company}</p>
+            <p>Phone: {quotationFormData.phone}</p>
+            <p>Project: {quotationFormData.project}</p>
+            <p>Place: {quotationFormData.place}</p>
+            <p>Address: {quotationFormData.address}</p>
+            <p>Quote by: {quotationFormData.quote}</p>
+          </div>
+        )}
       <table className="table-auto border-collapse border border-gray-300 w-full text-sm text-center">
         <thead>
           <tr className="bg-teal-500 text-white">
@@ -98,9 +113,7 @@ const Page = () => {
                 className={`${index % 2 === 0 ? "bg-white" : "bg-gray-100"}`}
               >
                 <td className="border border-gray-300 px-4 py-2">{row.id}</td>
-                <td className="border border-gray-300 px-4 py-2">
-                  {row.type}
-                </td>
+                <td className="border border-gray-300 px-4 py-2">{row.type}</td>
                 <td className="border border-gray-300 px-4 py-2">
                   {row.width}
                 </td>
