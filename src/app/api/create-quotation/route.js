@@ -55,7 +55,7 @@ export async function POST(request) {
 
         const today = new Date();
         const formattedDate = today.toLocaleDateString('th-TH', { year: 'numeric', month: '2-digit', day: '2-digit' }); // Thai date format
-        doc.text(`Date ${formattedDate}`, 195, 65, { align: 'right' }); // Dynamic Date (Top Right, below company info)
+        doc.text(`Date ${formattedDate}`, 195, 60, { align: 'right' }); // Dynamic Date (Top Right, below company info)
 
         // --- 3. Customer Information (Left Side - Dynamic from InputInfo) ---
         doc.setFontSize(10);
@@ -72,21 +72,21 @@ export async function POST(request) {
         doc.text(`${quotationFormData.address || '-'}`, customerInfoX + 20, customerInfoY);
         customerInfoY += 5;
         doc.text(`Tel.`, customerInfoX, customerInfoY);
-        doc.text(`${quotationFormData.phone || '-'}`, customerInfoX + 20, quotationFormData.phone);
+        doc.text(`${quotationFormData.phone || '-'}`, customerInfoX + 20, customerInfoY);
 
         // --- 4. Quotation Details (Right Side - Dynamic Place, Project, Quoted by) ---
         doc.setFontSize(10);
         doc.setFont('NotoSansThai', 'normal'); // Set font to NotoSansThai for quotation details
         let quotationDetailsX = 110; // X position for right side details
-        let quotationDetailsY = 70; // Adjusted Y position to start below Date
+        let quotationDetailsY = 65; // Adjusted Y position to start below Date
         doc.text(`Place`, quotationDetailsX, quotationDetailsY);
         doc.text(`${quotationFormData.place || '-'}`, quotationDetailsX + 20, quotationDetailsY);
         quotationDetailsY += 5;
         doc.text(`Project`, quotationDetailsX, quotationDetailsY);
         doc.text(`${quotationFormData.project || '-'}`, quotationDetailsX + 20, quotationDetailsY);
         quotationDetailsY += 5;
-        doc.text(`Quoted by`, quotationDetailsX, quotationDetailsY);
-        doc.text(`${quotationFormData.quote || '-'}`, quotationDetailsX, quotationDetailsY);
+        doc.text(`Quoted by`, quotationDetailsX, quotationDetailsY + 5); // "Quoted by" Y position *increased by 5px* to avoid overlap
+        doc.text(`${quotationFormData.quote || '-'}`, quotationDetailsX + 18, quotationDetailsY + 5); // Quoted by X and Y adjusted
 
 
         // --- 5. Horizontal Line Separator ---
@@ -95,17 +95,21 @@ export async function POST(request) {
         // --- 6. Product Table Headers (Same as before) ---
         const headers = ["Code", "Series", "Description", "Size (mm.)", " ", "Qty.", "Price/Unit\n(THB)", "Total\n(THB)"]; // Modified Headers
         let tableY = 95; // Start Y for table
-        let tableX = 20;
-        const cellWidths = [15, 20, 60, 20, 5, 15, 25, 25]; // Adjusted Column Widths
+        let tableX = 5;
+        const cellWidths = [15, 20, 60, 20, 20, 15, 25, 25]; // Adjusted Column Widths
 
-        const addTableCell = (doc, text, x, y, width, height = 10, isHeader = false, align = 'center') => { // Added height and align
+        const addTableCell = (doc, text, x, y, width, height = 10, isHeader = false, align = 'center', isPrice = false) => { // **Added isPrice parameter**
             doc.rect(x, y, width, height);
             if (isHeader) {
                 doc.setFont('Helvetica', 'bold');
             } else {
-                doc.setFont('NotoSansThai', 'normal'); // Set NotoSansThai for table data cells <--- ENSURE THIS LINE IS HERE
+                doc.setFont('NotoSansThai', 'normal');
             }
-            doc.text(text, x + width/2, y + height/2 + 2, { align: align }); // Vertically centered text
+            let displayValue = text; // Default display value is just the text
+            if (isPrice && typeof text === 'number') { // **If isPrice and text is a number, format it**
+                displayValue = text.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            }
+            doc.text(displayValue, x + width/2, y + height/2 + 2, { align: align }); // Vertically centered text
             if (isHeader) {
                 doc.setFont('Helvetica', 'normal');
             }
@@ -114,7 +118,7 @@ export async function POST(request) {
         // Table Header Row (Same as before)
         let currentX = tableX;
         headers.forEach((header, index) => {
-            const headerHeight = (header === "Size (mm.)" || header === "Price/Unit\n(THB)" || header === "Total\n(THB)") ? 15 : 10; // Adjust header height for multi-line headers
+            const headerHeight = (header === "Size (mm.)" || header === "   Price/Unit\n(THB)" || header === "Total\n(THB)") ? 15 : 10; // Adjust header height for multi-line headers
             addTableCell(doc, header, currentX, tableY, cellWidths[index], headerHeight, true);
             currentX += cellWidths[index];
         });
@@ -131,61 +135,97 @@ export async function POST(request) {
         slidingWindowData.forEach(item => {
             currentX = tableX;
             const totalPrice = item.price && item.qty ? Number(item.price) * Number(item.qty) : 0; // Ensure totalPrice is a number
-            const rowData = [item.id, item.type, item.glass, item.width, item.height, item.qty, item.price ?? 'N/A', totalPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })]; // Format totalPrice
+            const rowData = [
+                item.id,
+                item.type,
+                item.glass,
+                item.width,
+                item.height,
+                item.qty,
+                item.price ? Number(item.price) : 'N/A', // Pass price as Number if available, else 'N/A'
+                totalPrice
+            ];
             rowData.forEach((cell, index) => {
                 let cellAlign = 'center';
-                if (index === 2) cellAlign = 'left'; // Left align description column
-                if (index > 5) cellAlign = 'right'; // Right align price and total columns
-                addTableCell(doc, cell.toString(), currentX, tableY, cellWidths[index], 10, false, cellAlign);
+                let isPriceCell = false; // Default isPriceCell to false
+                if (index === 2) cellAlign = 'left';
+                if (index > 5) {
+                    cellAlign = 'right';
+                    isPriceCell = true; // **Set isPriceCell to true for Price/Unit and Total columns**
+                }
+                addTableCell(doc, cell.toString(), currentX, tableY, cellWidths[index], 10, false, cellAlign, isPriceCell); // **Pass isPriceCell to addTableCell**
                 currentX += cellWidths[index];
             });
             tableY += 10;
         });
 
         // --- 8. Summary Section (Right Bottom - Same calculations, adjusted labels) ---
-        let summaryX = 130; // X position for summary labels
-        let summaryAmountX = 195; // X position for summary amounts (right align)
-        let summaryY = tableY + 10; // Start summary below table
+        let summaryX = 130;
+        let summaryAmountX = 195;
+        let summaryY = tableY + 10;
 
-        let subtotal = slidingWindowData.reduce((sum, item) => sum + (Number(item.price) * Number(item.qty) || 0), 0); // Calculate subtotal
-        let installationCost = Number(quotationFormData.installationAmount) || 0; // Get from form, default 0
-        let shippingCost = Number(quotationFormData.shippingAmount) || 0;    // Get from form, default 0
+        let subtotal = slidingWindowData.reduce((sum, item) => sum + (Number(item.price) * Number(item.qty) || 0), 0);
+        let installationCost = Number(quotationFormData.installationAmount) || 0; // Get from form
+        let shippingCost = Number(quotationFormData.shippingAmount) || 0;    // Get from form
+        let discountPercent = Number(quotationFormData.discountPercentage) || 0; // Get discount % from form
+        let discountAmount = Number(quotationFormData.discountAmount) || 0;     // Get discount amount (fixed) from form
         let vatRate = 0.07;
-        let vatAmount = subtotal * vatRate + installationCost * vatRate + shippingCost * vatRate;
-        let totalAmount = subtotal + installationCost + shippingCost + vatAmount;
+        let calculatedDiscountAmount = (subtotal * discountPercent) / 100; // Calculate discount from percentage
+        let totalDiscount = calculatedDiscountAmount + discountAmount; // Total discount is % discount + fixed discount
+        let discountedSubtotal = subtotal - totalDiscount; // Apply discount to subtotal
+
+
+        let vatAmount = discountedSubtotal * vatRate + installationCost * vatRate + shippingCost * vatRate; // VAT on discounted subtotal
+        let totalAmount = discountedSubtotal + installationCost + shippingCost + vatAmount; // Total on discounted subtotal
 
         doc.setFontSize(10);
-        doc.setFont('NotoSansThai', 'normal'); // Set font to NotoSansThai for summary section labels <--- ENSURE THIS LINE IS HERE
-        doc.text(`ราคารวมค่าสินค้า`, summaryX, summaryY, { align: 'right' }); // Item Subtotal Label
-        doc.text(`${subtotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, summaryAmountX, summaryY, { align: 'right' }); // Item Subtotal Amount
+        doc.text(`ราคารวมค่าสินค้า`, summaryX, summaryY, { align: 'right' });
+        doc.text(`${subtotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, summaryAmountX, summaryY, { align: 'right' });
         summaryY += 5;
 
-        if (quotationFormData.includeInstallationCost) { // Conditionally include installation cost
-            doc.text(`ค่าติดตั้ง`, summaryX, summaryY, { align: 'right' }); // Installation Cost Label
-            doc.text(`${installationCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, summaryAmountX, summaryY, { align: 'right' }); // Installation Cost Amount
+        if (discountPercent > 0) { // Conditionally display % discount if > 0
+            doc.text(`ส่วนลด (${discountPercent}%)`, summaryX, summaryY, { align: 'right' }); // Discount % Label
+            doc.text(`-${calculatedDiscountAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, summaryAmountX, summaryY, { align: 'right' }); // Discount % Amount
             summaryY += 5;
         }
-
-        if (quotationFormData.includeShippingCost) { // Conditionally include shipping cost
-            doc.text(`ค่าขนส่ง`, summaryX, summaryY, { align: 'right' }); // Shipping Cost Label
-            doc.text(`${shippingCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, summaryAmountX, summaryY, { align: 'right' }); // Shipping Cost Amount
+        if (discountAmount > 0) { // Conditionally display fixed discount if > 0
+            doc.text(`ส่วนลด (บาท)`, summaryX, summaryY, { align: 'right' }); // Discount (Baht) Label
+            doc.text(`-${discountAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, summaryAmountX, summaryY, { align: 'right' }); // Discount (Baht) Amount
             summaryY += 5;
         }
 
 
         //doc.setFont('Helvetica', 'bold');
-        doc.text(`ราคารวมสุทธิ`, summaryX, summaryY, { align: 'right' }); // Net Total Label
-        doc.text(`${(subtotal + installationCost + shippingCost).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, summaryAmountX, summaryY, { align: 'right' }); // Net Total Amount
+        doc.text(`ราคารวมหลังหักส่วนลด`, summaryX, summaryY, { align: 'right' }); // Discounted Subtotal Label
+        doc.text(`${discountedSubtotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, summaryAmountX, summaryY, { align: 'right' }); // Discounted Subtotal Amount
+        summaryY += 5;
+        doc.setFont('NotoSansThai', 'normal');
+
+        if (quotationFormData.includeInstallationCost) {
+            doc.text(`ค่าติดตั้ง`, summaryX, summaryY, { align: 'right' });
+            doc.text(`${installationCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, summaryAmountX, summaryY, { align: 'right' });
+            summaryY += 5;
+        }
+
+        if (quotationFormData.includeShippingCost) {
+            doc.text(`ค่าขนส่ง`, summaryX, summaryY, { align: 'right' });
+            doc.text(`${shippingCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, summaryAmountX, summaryY, { align: 'right' });
+            summaryY += 5;
+        }
+
+
+        //doc.setFont('Helvetica', 'bold');
+        doc.text(`ราคารวมสุทธิ`, summaryX, summaryY, { align: 'right' });
+        doc.text(`${(discountedSubtotal + installationCost + shippingCost).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, summaryAmountX, summaryY, { align: 'right' });
         summaryY += 5;
         //doc.setFont('Helvetica', 'normal');
-        doc.text(`VAT 7%`, summaryX, summaryY, { align: 'right' }); // VAT Label
-        doc.text(`${vatAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, summaryAmountX, summaryY, { align: 'right' }); // VAT Amount
+        doc.text(`VAT 7%`, summaryX, summaryY, { align: 'right' });
+        doc.text(`${vatAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, summaryAmountX, summaryY, { align: 'right' });
         summaryY += 5;
         //doc.setFont('Helvetica', 'bold');
-        doc.text(`ราคารวม VAT`, summaryX, summaryY, { align: 'right' }); // Grand Total Label
-        doc.text(`${totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, summaryAmountX, summaryY, { align: 'right' }); // Grand Total Amount
+        doc.text(`ราคารวม VAT`, summaryX, summaryY, { align: 'right' });
+        doc.text(`${totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, summaryAmountX, summaryY, { align: 'right' });
         doc.setFont('Helvetica', 'normal');
-
 
         // --- 9. "หมายเหตุ" (Notes) Section (Bottom Left - Same Notes) ---
         let notesX = 20;
@@ -235,7 +275,7 @@ export async function POST(request) {
             status: 200,
             headers: {
                 'Content-Type': 'application/pdf',
-                'Content-Disposition': 'attachment; filename="quotation.pdf"',
+                'Content-Disposition': 'inline; filename="quotation.pdf"',
             },
         });
 

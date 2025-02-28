@@ -9,12 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@prisma/client": "^6.4.1",
     "@supabase/supabase-js": "^2.48.1",
     "dotenv": "^16.4.7",
     "html-pdf-node": "^1.0.8",
     "jspdf": "^2.5.2",
     "jspdf-autotable": "^3.8.4",
     "next": "15.1.6",
+    "next-auth": "^4.24.11",
     "pdfkit": "^0.16.0",
     "pdfmake": "^0.2.18",
     "pg": "^8.13.1",
@@ -32,6 +34,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.1.6",
     "postcss": "^8.5.1",
+    "prisma": "^6.4.1",
     "tailwindcss": "^3.4.17",
     "typescript": "^5"
   }

@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id                       String    @id @default(cuid())
+  email                    String    @unique
+  username                 String    @unique
+  password                 String
+  emailVerified            DateTime?
+  verificationToken        String?   @unique
+  verificationTokenExpires DateTime?
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
+  credit                   Int       @default(10)
+  role                     Role      @default(USER)
+
+  creditHistory CreditHistory[]
+}
+
+model CreditHistory {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  amount    Int // จำนวนเครดิตที่เพิ่มหรือลด
+  type      String // ประเภท เช่น "add", "spend", "refund"
+  createdAt DateTime @default(now())
+}
+
+model VerificationToken {
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
+
+model PasswordResetToken {
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}

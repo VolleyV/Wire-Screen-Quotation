@@ -41,40 +41,30 @@ const Page = () => {
     } 
   }, []);
   const previewQuotation = async () => {
-    // ... (get slidingWindowData from sessionStorage)
-
     try {
       const response = await fetch("/api/create-quotation", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          slidingWindowData: slidingWindowData, // Send slidingWindowData
-          quotationFormData: quotationFormData // Send quotationFormData
-        }),
+        body: JSON.stringify({ slidingWindowData: slidingWindowData, quotationFormData: quotationFormData }),
       });
+
       if (!response.ok) {
-        // Error handling (still get error details as JSON if API sends it for errors)
-        const errorData = await response.json();
-        console.error("Failed to create quotation:", errorData);
-        alert(
-          `Failed to create quotation: ${errorData.error || "Unknown error"}`
-        );
-        return;
+          const errorData = await response.json();
+          console.error("Failed to create quotation:", errorData);
+          alert(`Failed to create quotation: ${errorData.error || 'Unknown error'}`);
+          return;
       }
 
-      // **No response.json() here!** - We expect a PDF download, not JSON
-      // **Handle PDF download - get blob and create download link (as in your original code)**
-
-      const blob = await response.blob(); // Get response as Blob (binary data)
+      const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "test-quotation.pdf"; // Or 'test-quotation.pdf' now
-      link.click();
+
+      // **Open PDF in a new tab for preview**
+      window.open(url, '_blank'); // '_blank' opens in a new tab
+
     } catch (error) {
       console.error("Error fetching PDF:", error);
     }
-  };
+};
   return (
     <div className="container mx-auto px-4 py-4">
          {quotationFormData && (
