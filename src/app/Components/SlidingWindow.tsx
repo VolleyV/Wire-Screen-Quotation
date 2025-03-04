@@ -98,7 +98,7 @@ const SlidingWindow = () => {
           }
           try {
             const response = await fetch(
-              `/api/calculate-price?width=${row.width}&height=${row.height}`
+              `/api/check-price?width=${row.width}&height=${row.height}`
             );
             console.log(response);
             console.log(row.qty);
