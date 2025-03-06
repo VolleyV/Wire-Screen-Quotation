@@ -86,14 +86,14 @@ export async function POST(request) {
         doc.text(`${quotationFormData.project || '-'}`, quotationDetailsX + 20, quotationDetailsY);
         quotationDetailsY += 5;
         doc.text(`Quoted by`, quotationDetailsX, quotationDetailsY + 5); // "Quoted by" Y position *increased by 5px* to avoid overlap
-        doc.text(`${quotationFormData.quote || '-'}`, quotationDetailsX + 18, quotationDetailsY + 5); // Quoted by X and Y adjusted
+        doc.text(`${quotationFormData.quote || '-'}`, quotationDetailsX + 20, quotationDetailsY + 5); // Quoted by X and Y adjusted
 
 
         // --- 5. Horizontal Line Separator ---
         doc.line(20, 85, 195, 85); // x1, y1, x2, y2
 
         // --- 6. Product Table Headers (Same as before) ---
-        const headers = ["Code", "Series", "Description", "Size (mm.)", " ", "Qty.", "Price/Unit\n(THB)", "Total\n(THB)"]; // Modified Headers
+        const headers = ["Code", "Series", "Description", "W", "H", "Qty.", "Price/Unit\n(THB)", "Total\n(THB)"]; // Modified Headers
         let tableY = 95; // Start Y for table
         let tableX = 5;
         const cellWidths = [15, 20, 60, 20, 20, 15, 25, 25]; // Adjusted Column Widths
@@ -118,15 +118,15 @@ export async function POST(request) {
         // Table Header Row (Same as before)
         let currentX = tableX;
         headers.forEach((header, index) => {
-            const headerHeight = (header === "Size (mm.)" || header === "   Price/Unit\n(THB)" || header === "Total\n(THB)") ? 15 : 10; // Adjust header height for multi-line headers
+            const headerHeight = 15; // Adjust header height for multi-line headers
             addTableCell(doc, header, currentX, tableY, cellWidths[index], headerHeight, true);
             currentX += cellWidths[index];
         });
 
         // Sub-headers for "Size (mm.)" (Same as before)
-        let sizeHeaderX = tableX + cellWidths[0] + cellWidths[1] + cellWidths[2]; // X position for "Size (mm.)" columns
+       /*  let sizeHeaderX = tableX + cellWidths[0] + cellWidths[1] + cellWidths[2]; // X position for "Size (mm.)" columns
         addTableCell(doc, "W", sizeHeaderX, tableY + 10, cellWidths[3], 5, true); // "W" sub-header
-        addTableCell(doc, "H", sizeHeaderX + cellWidths[3], tableY + 10, cellWidths[4], 5, true); // "H" sub-header
+        addTableCell(doc, "H", sizeHeaderX + cellWidths[3], tableY + 10, cellWidths[4], 5, true); // "H" sub-header */
 
 
         tableY += 15; // Move Y position below headers

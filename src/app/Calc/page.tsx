@@ -1,5 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { FaRegFilePdf } from "react-icons/fa6";
+import { IconContext } from "react-icons/lib";
 
 interface SlidingWindowData {
   id: number;
@@ -29,56 +31,66 @@ const Page = () => {
   const [slidingWindowData, setSlidingWindowData] = useState<
     SlidingWindowData[]
   >([]);
-  const [quotationFormData, setQuotationFormData] = useState<QuotationFormData | null>(null); // State for form data
+  const [quotationFormData, setQuotationFormData] =
+    useState<QuotationFormData | null>(null); // State for form data
 
   useEffect(() => {
     const storedCombinedData = sessionStorage.getItem("combinedQuotationData");
     if (storedCombinedData) {
-      const combinedData = JSON.parse(storedCombinedData) as CombinedQuotationData;
+      const combinedData = JSON.parse(
+        storedCombinedData
+      ) as CombinedQuotationData;
       setSlidingWindowData(combinedData.slidingWindowData);
       setQuotationFormData(combinedData.quotationFormData); // Set form data state
       console.log("Combined Data from sessionStorage:", combinedData); // Log combined data
-    } 
+    }
   }, []);
   const previewQuotation = async () => {
     try {
       const response = await fetch("/api/create-quotation", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ slidingWindowData: slidingWindowData, quotationFormData: quotationFormData }),
+        body: JSON.stringify({
+          slidingWindowData: slidingWindowData,
+          quotationFormData: quotationFormData,
+        }),
       });
 
       if (!response.ok) {
-          const errorData = await response.json();
-          console.error("Failed to create quotation:", errorData);
-          alert(`Failed to create quotation: ${errorData.error || 'Unknown error'}`);
-          return;
+        const errorData = await response.json();
+        console.error("Failed to create quotation:", errorData);
+        alert(
+          `Failed to create quotation: ${errorData.error || "Unknown error"}`
+        );
+        return;
       }
 
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
 
       // **Open PDF in a new tab for preview**
-      window.open(url, '_blank'); // '_blank' opens in a new tab
-
+      window.open(url, "_blank"); // '_blank' opens in a new tab
     } catch (error) {
       console.error("Error fetching PDF:", error);
     }
-};
+  };
   return (
     <div className="container mx-auto px-4 py-4">
-         {quotationFormData && (
-          <div className="mb-4">
-            <h2 className="text-lg font-bold mb-2">Quotation Information</h2>
-            <p>Attention: {quotationFormData.attention}</p>
-            <p>Company: {quotationFormData.company}</p>
-            <p>Phone: {quotationFormData.phone}</p>
-            <p>Project: {quotationFormData.project}</p>
-            <p>Place: {quotationFormData.place}</p>
-            <p>Address: {quotationFormData.address}</p>
-            <p>Quote by: {quotationFormData.quote}</p>
-          </div>
-        )}
+      {quotationFormData && (
+        <div className="mb-4">
+          <h2 className="text-xl font-bold mb-2">Quotation Information</h2>
+          <p>Attention: {quotationFormData.attention}</p>
+          <p>Company: {quotationFormData.company}</p>
+          <p>Phone: {quotationFormData.phone}</p>
+          <p>Project: {quotationFormData.project}</p>
+          <p>Place: {quotationFormData.place}</p>
+          <p>Address: {quotationFormData.address}</p>
+          <p>Quote by: {quotationFormData.quote}</p>
+        </div>
+      )}
+      <div>
+        <h2 className="text-xl font-bold mb-2">Product Details</h2>
+      </div>
       <table className="table-auto border-collapse border border-gray-300 w-full text-sm text-center">
         <thead>
           <tr className="bg-teal-500 text-white">
@@ -122,9 +134,17 @@ const Page = () => {
           })}
         </tbody>
       </table>
-      <div>
-        <button className="bg-green-500 mt-4" onClick={previewQuotation}>
-          Preview PDF
+      <div className="flex justify-start">
+        <button
+         className="bg-green-500 text-white px-4 py-2 rounded mt-5 flex items-center gap-2"
+          onClick={previewQuotation}
+        >
+          <IconContext.Provider value={{ className: "shared-class", size: "20" }}>
+            <>
+            Download
+            <FaRegFilePdf className=""/>
+            </>
+          </IconContext.Provider>
         </button>
       </div>
     </div>

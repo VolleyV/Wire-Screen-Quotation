@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useRouter } from 'next/navigation'; // Import useRouter for navigation
+import { toast } from "react-toastify";
 
 const InputInfo = () => {
   const [formData, setFormData] = useState({
@@ -10,17 +12,18 @@ const InputInfo = () => {
     phone: "",
     quote: "",
     includeInstallationCost: false, // Checkbox: ราคารวมค่าติดตั้ง
-    includeShippingCost: false,    // Checkbox: ราคารวมค่าขนส่ง
-    includeVAT: false,             // Checkbox: ราคารวม VAT 7%
-    includeValueAddedTax: false,    // Checkbox: ราคารวมมูลค่าเพิ่ม
-    add5PercentDiscount: false,     // Checkbox: บวก 5% ส่วนลด
+    includeShippingCost: false, // Checkbox: ราคารวมค่าขนส่ง
+    includeVAT: false, // Checkbox: ราคารวม VAT 7%
+    includeValueAddedTax: false, // Checkbox: ราคารวมมูลค่าเพิ่ม
+    add5PercentDiscount: false, // Checkbox: บวก 5% ส่วนลด
     deduct20PercentNonStill: false, // Checkbox: หัก 20% Non-Still
-    discountPercentage: "",         // Input: ส่วนลดสินค้า (%)
-    discountAmount: "",             // Input: ส่วนลด (บาท)
-    shippingAmount: "",             // Input: ค่าขนส่งสินค้า (บาท)
-    installationAmount: "",         // Input: ค่าติดตั้ง (บาท)
-    vatDiscountAmount: "",          // Input: ส่วนลด VAT (บาท) -  (Though VAT discount is unusual, keeping it as per UI)
+    discountPercentage: "", // Input: ส่วนลดสินค้า (%)
+    discountAmount: "", // Input: ส่วนลด (บาท)
+    shippingAmount: "", // Input: ค่าขนส่งสินค้า (บาท)
+    installationAmount: "", // Input: ค่าติดตั้ง (บาท)
+    vatDiscountAmount: "", // Input: ส่วนลด VAT (บาท) -  (Though VAT discount is unusual, keeping it as per UI)
   });
+  const router = useRouter(); // Initialize useRouter
 
   useEffect(() => {
     console.log("Saving InputInfo data:", formData);
@@ -31,7 +34,40 @@ const InputInfo = () => {
     e.preventDefault();
     // No submit action needed here, data is saved on change
   };
+  const handleSaveHistory = async () => {
+    try {
+      // **Generate unique ID using Date.now().toString()**
+      const quotationId = Date.now().toString();
+      console.log("Generated quotationId:", quotationId);
 
+      // **Include quotationId in formData**
+      const formDataWithId = {
+        ...formData,
+        quotationId: quotationId, // Add quotationId to formData
+      };
+
+      console.log("Sending formData with ID:", formDataWithId); // Log data being sent
+
+      const response = await fetch("/api/create-quotation/save-history", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formDataWithId), // Send formDataWithId (including quotationId)
+      });
+
+      if (response.ok) {
+        toast.success("บันทึกข้อมูลลูกค้าเรียบร้อยแล้ว");
+      } else {
+        const errorData = await response.json();
+        toast.error(`บันทึกข้อมูลลูกค้าไม่สำเร็จ: ${errorData.error || 'Unknown error'}`);
+        console.error("Failed to save history:", errorData);
+      }
+    } catch (error) {
+      console.error("Error saving history:", error);
+      toast.error("เกิดข้อผิดพลาดในการบันทึกข้อมูลลูกค้า");
+    }
+  };
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [event.target.name]: event.target.checked });
   };
@@ -39,7 +75,6 @@ const InputInfo = () => {
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [event.target.name]: event.target.value });
   };
-
 
   return (
     <div>
@@ -119,7 +154,7 @@ const InputInfo = () => {
               Telephone number
             </label>
             <input
-              type="number"
+              type="text"
               value={formData.phone}
               className="border px-2 py-2 rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
               onChange={(e) =>
@@ -141,14 +176,31 @@ const InputInfo = () => {
               }
             />
           </div>
+          <div className="flex justify-center w-full md:w-2/12 px-2">
+            <button 
+              type="button" // type="button" is important to prevent form submission
+              className="bg-green-500 text-white px-4 py-2 rounded mt-5 justify-items-end"
+              onClick={handleSaveHistory} // Call handleSaveHistory on click
+            >
+              บันทึกรายการ
+            </button>
+            <button
+              type="button" // type="button" is important to prevent form submission
+              className="ml-4 bg-blue-500 text-white px-4 py-2 rounded mt-5 justify-items-end"
+              onClick={() => router.push("/Customer-history")} // Navigate to CustomerHistoryPage
+            >
+              ดูรายการ
+            </button>
+          </div>
         </div>
 
-
         {/* --- New Checkbox Options --- */}
-        <div className="mt-6 border-t border-blueGray-200">
-          <h4 className="text-xl text-blueGray-700 mt-4 mb-2">ตัวเลือกเพิ่มเติม</h4>
+        <div className="mt-5  border-t border-blueGray-200">
+          <h4 className="text-xl text-blueGray-700 mt-4 mb-4 ml-5 font-bold">
+            ตัวเลือกเพิ่มเติม
+          </h4>
           <div className="flex flex-wrap">
-            <div className="w-full md:w-6/12 px-4">
+            <div className="w-full md:w-2/12 px-4">
               <div className="flex items-center mb-2">
                 <input
                   type="checkbox"
@@ -158,7 +210,10 @@ const InputInfo = () => {
                   onChange={handleCheckboxChange}
                   className="form-checkbox h-5 w-5 text-blue-600 rounded focus:ring-blue-500 mr-2"
                 />
-                <label htmlFor="includeInstallationCost" className="text-blueGray-600 text-sm">
+                <label
+                  htmlFor="includeInstallationCost"
+                  className="text-blueGray-600 text-sm"
+                >
                   ราคารวมค่าติดตั้ง
                 </label>
               </div>
@@ -171,7 +226,10 @@ const InputInfo = () => {
                   onChange={handleCheckboxChange}
                   className="form-checkbox h-5 w-5 text-blue-600 rounded focus:ring-blue-500 mr-2"
                 />
-                <label htmlFor="includeShippingCost" className="text-blueGray-600 text-sm">
+                <label
+                  htmlFor="includeShippingCost"
+                  className="text-blueGray-600 text-sm"
+                >
                   ราคารวมค่าขนส่ง
                 </label>
               </div>
@@ -184,7 +242,10 @@ const InputInfo = () => {
                   onChange={handleCheckboxChange}
                   className="form-checkbox h-5 w-5 text-blue-600 rounded focus:ring-blue-500 mr-2"
                 />
-                <label htmlFor="includeVAT" className="text-blueGray-600 text-sm">
+                <label
+                  htmlFor="includeVAT"
+                  className="text-blueGray-600 text-sm"
+                >
                   ราคารวม VAT 7%
                 </label>
               </div>
@@ -197,7 +258,10 @@ const InputInfo = () => {
                   onChange={handleCheckboxChange}
                   className="form-checkbox h-5 w-5 text-blue-600 rounded focus:ring-blue-500 mr-2"
                 />
-                <label htmlFor="includeValueAddedTax" className="text-blueGray-600 text-sm">
+                <label
+                  htmlFor="includeValueAddedTax"
+                  className="text-blueGray-600 text-sm"
+                >
                   ราคารวมมูลค่าเพิ่ม
                 </label>
               </div>
@@ -210,11 +274,14 @@ const InputInfo = () => {
                   onChange={handleCheckboxChange}
                   className="form-checkbox h-5 w-5 text-blue-600 rounded focus:ring-blue-500 mr-2"
                 />
-                <label htmlFor="add5PercentDiscount" className="text-blueGray-600 text-sm">
+                <label
+                  htmlFor="add5PercentDiscount"
+                  className="text-blueGray-600 text-sm"
+                >
                   บวก 5% ส่วนลด
                 </label>
               </div>
-               <div className="flex items-center mb-2">
+              {/*   <div className="flex items-center mb-2">
                 <input
                   type="checkbox"
                   id="deduct20PercentNonStill"
@@ -226,11 +293,15 @@ const InputInfo = () => {
                 <label htmlFor="deduct20PercentNonStill" className="text-blueGray-600 text-sm">
                   หัก 20% Non-Still
                 </label>
-              </div>
+              </div> */}
             </div>
-            <div className="w-full md:w-6/12 px-4">
+            {/* Additional inputbox */}
+            <div className="w-full w-8/12 px-4">
               <div className="mb-2">
-                <label htmlFor="discountPercentage" className="block text-blueGray-600 text-sm mb-1">
+                <label
+                  htmlFor="discountPercentage"
+                  className="block text-blueGray-600 text-sm mb-1"
+                >
                   ส่วนลดสินค้า (%)
                 </label>
                 <input
@@ -239,11 +310,14 @@ const InputInfo = () => {
                   name="discountPercentage"
                   value={formData.discountPercentage}
                   onChange={handleInputChange}
-                  className="border px-2 py-1 rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                  className="border px-2 py-1 rounded text-sm shadow focus:outline-none focus:ring w-48 ease-linear transition-all duration-150"
                 />
               </div>
               <div className="mb-2">
-                <label htmlFor="discountAmount" className="block text-blueGray-600 text-sm mb-1">
+                <label
+                  htmlFor="discountAmount"
+                  className="block text-blueGray-600 text-sm mb-1"
+                >
                   ส่วนลด (บาท)
                 </label>
                 <input
@@ -252,11 +326,14 @@ const InputInfo = () => {
                   name="discountAmount"
                   value={formData.discountAmount}
                   onChange={handleInputChange}
-                  className="border px-2 py-1 rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                  className="border px-2 py-1 rounded text-sm shadow focus:outline-none focus:ring w-48 ease-linear transition-all duration-150"
                 />
               </div>
               <div className="mb-2">
-                <label htmlFor="shippingAmount" className="block text-blueGray-600 text-sm mb-1">
+                <label
+                  htmlFor="shippingAmount"
+                  className="block text-blueGray-600 text-sm mb-1"
+                >
                   ค่าขนส่งสินค้า (บาท)
                 </label>
                 <input
@@ -265,11 +342,14 @@ const InputInfo = () => {
                   name="shippingAmount"
                   value={formData.shippingAmount}
                   onChange={handleInputChange}
-                  className="border px-2 py-1 rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                  className="border px-2 py-1 rounded text-sm shadow focus:outline-none focus:ring w-48 ease-linear transition-all duration-150"
                 />
               </div>
-               <div className="mb-2">
-                <label htmlFor="installationAmount" className="block text-blueGray-600 text-sm mb-1">
+              <div className="mb-2">
+                <label
+                  htmlFor="installationAmount"
+                  className="block text-blueGray-600 text-sm mb-1"
+                >
                   ค่าติดตั้ง (บาท)
                 </label>
                 <input
@@ -278,11 +358,14 @@ const InputInfo = () => {
                   name="installationAmount"
                   value={formData.installationAmount}
                   onChange={handleInputChange}
-                  className="border px-2 py-1 rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                  className="border px-2 py-1 rounded text-sm shadow focus:outline-none focus:ring w-48 ease-linear transition-all duration-150"
                 />
               </div>
-               <div className="mb-2">
-                <label htmlFor="vatDiscountAmount" className="block text-blueGray-600 text-sm mb-1">
+              <div className="mb-2">
+                <label
+                  htmlFor="vatDiscountAmount"
+                  className="block text-blueGray-600 text-sm mb-1"
+                >
                   ส่วนลด VAT (บาท)
                 </label>
                 <input
@@ -291,14 +374,12 @@ const InputInfo = () => {
                   name="vatDiscountAmount"
                   value={formData.vatDiscountAmount}
                   onChange={handleInputChange}
-                  className="border px-2 py-1 rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                  className="border px-2 py-1 rounded text-sm shadow focus:outline-none focus:ring w-48 ease-linear transition-all duration-150"
                 />
               </div>
             </div>
           </div>
         </div>
-
-
       </form>
     </div>
   );
