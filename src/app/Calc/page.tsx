@@ -76,6 +76,11 @@ const Page = () => {
   };
   return (
     <div className="container mx-auto px-4 py-4">
+      <div className="container mx-auto px-4 py-4">
+        <div className="mb-6">
+          <h1 className="text-4xl text-center font-bold">Vignet</h1>
+        </div>
+      </div>
       {quotationFormData && (
         <div className="mb-4">
           <h2 className="text-xl font-bold mb-2">Quotation Information</h2>
@@ -136,13 +141,15 @@ const Page = () => {
       </table>
       <div className="flex justify-start">
         <button
-         className="bg-green-500 text-white px-4 py-2 rounded mt-5 flex items-center gap-2"
+          className="bg-green-500 text-white px-4 py-2 rounded mt-5 flex items-center gap-2"
           onClick={previewQuotation}
         >
-          <IconContext.Provider value={{ className: "shared-class", size: "20" }}>
+          <IconContext.Provider
+            value={{ className: "shared-class", size: "20" }}
+          >
             <>
-            Download
-            <FaRegFilePdf className=""/>
+              Download
+              <FaRegFilePdf className="" />
             </>
           </IconContext.Provider>
         </button>

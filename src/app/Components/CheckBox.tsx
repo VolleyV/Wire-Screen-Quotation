@@ -1,29 +1,18 @@
-import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation"; // Import useRouter for navigation
-import { toast } from "react-toastify";
+import React from "react";
 
-const CheckBox = () => {
-  const [formData, setFormData] = useState({
-    includeInstallationCost: false, // Checkbox: ราคารวมค่าติดตั้ง
-    includeShippingCost: false, // Checkbox: ราคารวมค่าขนส่ง
-    includeVAT: false, // Checkbox: ราคารวม VAT 7%
-    includeValueAddedTax: false, // Checkbox: ราคารวมมูลค่าเพิ่ม
-    add5PercentDiscount: false, // Checkbox: บวก 5% ส่วนลด
-    deduct20PercentNonStill: false, // Checkbox: หัก 20% Non-Still
-    discountPercentage: "", // Input: ส่วนลดสินค้า (%)
-    discountAmount: "", // Input: ส่วนลด (บาท)
-    shippingAmount: "", // Input: ค่าขนส่งสินค้า (บาท)
-    installationAmount: "", // Input: ค่าติดตั้ง (บาท)
-    vatDiscountAmount: "", // Input: ส่วนลด VAT (บาท)
-  });
-  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [event.target.name]: event.target.checked });
-  };
+interface CheckBoxProps {
+  // Define an interface for the props
+  formData: any; //  It's better to be more specific with your formData type if possible.
+  handleCheckboxChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+}
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [event.target.name]: event.target.value });
-  };
-
+const CheckBox: React.FC<CheckBoxProps> = ({
+  // Destructure props here
+  formData,
+  handleCheckboxChange,
+  handleInputChange,
+}) => {
   return (
     <div className="mt-5  border-t border-blueGray-200">
       <h4 className="text-xl text-blueGray-700 mt-4 mb-4 ml-5 font-bold">
@@ -123,7 +112,7 @@ const CheckBox = () => {
         </div> */}
         </div>
         {/* Additional inputbox */}
-        <div className="w-full w-8/12 px-4">
+        <div className="w-full w-9/12 px-4">
           <div className="mb-2">
             <label
               htmlFor="discountPercentage"

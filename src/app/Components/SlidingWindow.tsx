@@ -1,7 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
-import { ToastContainer, toast, Zoom } from "react-toastify";
+import { ToastContainer, toast, } from "react-toastify";
 
 const SlidingWindow = () => {
   const [isChecked, setIsChecked] = useState(false);
@@ -145,7 +145,7 @@ const SlidingWindow = () => {
     }
   };
 
-  const checkPrice = async (index) => {
+  const checkPrice = async (index: number) => {
     const row = slidingWindow[index];
 
     if (!row.width || !row.height) return;

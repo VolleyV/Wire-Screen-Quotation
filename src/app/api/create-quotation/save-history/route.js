@@ -1,6 +1,6 @@
-import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
-import dotenv from 'dotenv';
+import { NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
+import dotenv from "dotenv";
 
 dotenv.config();
 
@@ -13,10 +13,9 @@ export async function POST(request) {
     const formData = await request.json();
     console.log("Received formData for saving:", formData);
 
-    // **Map formData to your Supabase table columns, including id**
+    // **Map formData to your Supabase table columns, including new JSONB columns**
     const customerHistoryData = {
-      id: formData.quotationId, // **Use quotationId from formData for the 'id' column**
-      Date: new Date().toLocaleDateString('en-CA'),
+      Date: new Date().toLocaleDateString("en-CA"),
       Attention: formData.attention,
       Company: formData.company,
       Place: formData.place,
@@ -24,27 +23,37 @@ export async function POST(request) {
       Project: formData.project,
       Phone: formData.phone,
       QuoteBy: formData.quote,
-      // ... other fields ...
+      slidingWindowData: formData.slidingWindowData, // **Save slidingWindowData to jsonb column**
+      quotationFormData: formData.quotationFormData, // **Save quotationFormData to jsonb column**
+      // You can add other fields from formData here if needed
     };
 
     console.log("Data to be inserted into Supabase:", customerHistoryData);
 
     const { data, error } = await supabase
-      .from('Customer')
+      .from("Customer") // **IMPORTANT: Verify your table name is "Customer"**
       .insert([customerHistoryData])
       .select();
 
     if (error) {
       console.error("Supabase Insert Error:", error);
-      return NextResponse.json({ error: `Failed to save history to database: ${error.message}` }, { status: 500 });
+      return NextResponse.json(
+        { error: `Failed to save history to database: ${error.message}` },
+        { status: 500 }
+      );
     }
 
     console.log("Data inserted successfully:", data);
 
-    return NextResponse.json({ message: "Data saved to history successfully!", data: data }, { status: 200 });
-
+    return NextResponse.json(
+      { message: "Data saved to history successfully!", data: data },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Error saving history:", error);
-    return NextResponse.json({ error: "Failed to save history" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to save history" },
+      { status: 500 }
+    );
   }
 }
