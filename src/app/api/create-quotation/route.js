@@ -50,7 +50,13 @@ export async function POST(request) {
         doc.text('ใบเสนอราคาเบื้องต้น (Drafted Quotation)', 105, 45, { align: 'center' }); // Centered Title (Thai)
         doc.setFontSize(10);
         doc.setFont('Helvetica', 'normal'); // Switch back to Helvetica for quotation number and date (optional - you can use NotoSansThai for all if you prefer)
-        const quotationNumber = "(TM-250225-001)"; // Replace with dynamic quotation number generation later if needed
+                // **--- Dynamic Quotation Number Generation ---**
+                const now = new Date();
+                const year = now.getFullYear().toString().slice(-2); // Get last 2 digits of year
+                const month = String(now.getMonth() + 1).padStart(2, '0'); // Month (01-12)
+                const day = String(now.getDate()).padStart(2, '0');      // Day (01-31)
+                const timestamp = Date.now().toString().slice(-3); // Last 3 digits of timestamp for short unique part
+                const quotationNumber = `(TM-${year}${month}${day}-${timestamp})`; // Format: (TM-YYMMDD-NNN)
         doc.text(quotationNumber, 105, 52, { align: 'center' }); // Centered Quotation Number (Placeholder)
 
         const today = new Date();
@@ -93,10 +99,10 @@ export async function POST(request) {
         doc.line(20, 85, 195, 85); // x1, y1, x2, y2
 
         // --- 6. Product Table Headers (Same as before) ---
-        const headers = ["Code", "Series", "Description", "W", "H", "Qty.", "Price/Unit\n(THB)", "Total\n(THB)"]; // Modified Headers
+        const headers = ["Series", "Description", "W", "H", "Qty.", "Price/Unit\n(THB)", "Total\n(THB)"]; // Modified Headers
         let tableY = 95; // Start Y for table
         let tableX = 5;
-        const cellWidths = [15, 20, 60, 20, 20, 15, 25, 25]; // Adjusted Column Widths
+        const cellWidths = [20, 70, 20, 20, 20, 25, 25, 25]; // Adjusted Column Widths
 
         const addTableCell = (doc, text, x, y, width, height = 10, isHeader = false, align = 'center', isPrice = false) => { // **Added isPrice parameter**
             doc.rect(x, y, width, height);
@@ -136,9 +142,9 @@ export async function POST(request) {
             currentX = tableX;
             const totalPrice = item.price && item.qty ? Number(item.price) * Number(item.qty) : 0; // Ensure totalPrice is a number
             const rowData = [
-                item.id,
+                /* item.id, */
                 item.type,
-                item.glass,
+                "ประตูหน้าต่างไวนิล (uPVC)",
                 item.width,
                 item.height,
                 item.qty,
@@ -148,9 +154,9 @@ export async function POST(request) {
             rowData.forEach((cell, index) => {
                 let cellAlign = 'center';
                 let isPriceCell = false; // Default isPriceCell to false
-                if (index === 2) cellAlign = 'left';
+                if (index === 2) cellAlign = 'center';
                 if (index > 5) {
-                    cellAlign = 'right';
+                    cellAlign = 'center';
                     isPriceCell = true; // **Set isPriceCell to true for Price/Unit and Total columns**
                 }
                 addTableCell(doc, cell.toString(), currentX, tableY, cellWidths[index], 10, false, cellAlign, isPriceCell); // **Pass isPriceCell to addTableCell**

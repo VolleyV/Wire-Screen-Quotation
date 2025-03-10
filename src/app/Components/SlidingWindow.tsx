@@ -1,7 +1,9 @@
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
-import { ToastContainer, toast, } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
+import { MdDelete } from "react-icons/md";
+import { IconContext } from "react-icons";
 
 const SlidingWindow = () => {
   const [isChecked, setIsChecked] = useState(false);
@@ -73,7 +75,7 @@ const SlidingWindow = () => {
     if (isChecked) {
       const isDataComplete = slidingWindow.every((row) => {
         return (
-          row.id.trim() !== "" &&
+          /* row.id.trim() !== "" && */
           row.type.trim() !== "" &&
           row.glass.trim() !== "" &&
           row.width.toString().trim() !== "" && // Convert to string and trim
@@ -190,12 +192,12 @@ const SlidingWindow = () => {
       <table className="table-auto border-collapse border border-gray-300 w-full text-sm">
         <thead>
           <tr className="bg-teal-500 text-white">
-            <th className="border border-gray-300 px-4 py-2" rowSpan={2}>
+            {/*  <th className="border border-gray-300 px-4 py-2" rowSpan={2}>
               รหัส
             </th>
             <th className="border border-gray-300 px-4 py-2" rowSpan={2}>
               sub
-            </th>
+            </th> */}
             <th className="border border-gray-300 px-4 py-2" rowSpan={2}>
               Type
             </th>
@@ -223,7 +225,7 @@ const SlidingWindow = () => {
               key={index}
               className={`${index % 2 === 0 ? "bg-white" : "bg-gray-100"}`}
             >
-              <td className="border border-gray-300 px-4 py-2 w-40">
+              {/* <td className="border border-gray-300 px-4 py-2 w-40">
                 <input
                   type="text"
                   value={row.id}
@@ -232,8 +234,8 @@ const SlidingWindow = () => {
                   }
                   className="border rounded px-2 py-1 w-full"
                 />
-              </td>
-              <td className="border border-gray-300 px-4 py-2 text-center">
+              </td> */}
+              {/*  <td className="border border-gray-300 px-4 py-2 text-center">
                 <input
                   type="checkbox"
                   checked={row.sub}
@@ -242,7 +244,7 @@ const SlidingWindow = () => {
                   }
                   className="form-checkbox h-5 w-5"
                 />
-              </td>
+              </td> */}
               <td className="border border-gray-300 px-4 py-2">
                 <select
                   value={row.type}
@@ -306,10 +308,16 @@ const SlidingWindow = () => {
                 />
               </td>
               <td
-                className="border border-gray-300 px-4 py-2 text-center text-red-500 cursor-pointer"
+                className="border border-gray-300 px-4 py-2 flex justify-center items-center text-red-500 cursor-pointer"
                 onClick={() => handleRemoveSlidingWindowRow(index)}
               >
-                ลบ
+                <IconContext.Provider
+                  value={{ className: "shared-class", size: "25" }}
+                >
+                  <>
+                    <MdDelete />
+                  </>
+                </IconContext.Provider>
               </td>
             </tr>
           ))}

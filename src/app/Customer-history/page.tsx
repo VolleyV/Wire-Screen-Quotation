@@ -2,7 +2,9 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation"; // Import useRouter for navigation
-
+import { MdDelete } from "react-icons/md";
+import { IconContext } from "react-icons";
+import { IoMdDownload } from "react-icons/io";
 interface CustomerHistoryData {
   id: number;
   Date: string;
@@ -79,7 +81,7 @@ const CustomerHistoryPage = () => {
 
     try {
       const response = await fetch(
-        `/api/create-quotation/get-quotation-data?customerId=${customerId}`
+        `/api/create-quotation/get-customer-data?customerId=${customerId}`
       ); // **Call new get-quotation-data API route with customerId**
 
       if (!response.ok) {
@@ -207,18 +209,30 @@ const CustomerHistoryPage = () => {
               <td className="border border-gray-300 px-4 py-2">
                 {customer.QuoteBy}
               </td>
-              <td className="border border-gray-300 px-4 py-2 text-center">
-                <button
-                  onClick={() => handleDeleteCustomer(customer.id)}
-                  className="bg-red-500 hover:bg-red-700 text-white px-2 py-1 rounded"
-                >
-                  ลบ
-                </button>
+              <td className="border border-gray-300 px-4 py-2 flex justify-center items-center cursor-pointer">
                 <button
                   onClick={() => handleDownloadQuotation(customer.id)} // Call handleDownloadQuotation on click
-                  className="bg-green-500 hover:bg-green-700 text-white px-2 py-1 rounded"
+                  className="text-blue-500"
                 >
-                  ดาวน์โหลด {/* Download Button Label (Thai) */}
+                  <IconContext.Provider
+                    value={{ className: "shared-class", size: "25" }}
+                  >
+                    <>
+                      <IoMdDownload />
+                    </>
+                  </IconContext.Provider>
+                </button>
+                <button
+                  onClick={() => handleDeleteCustomer(customer.id)}
+                  className="text-red-500 ml-2"
+                >
+                  <IconContext.Provider
+                    value={{ className: "shared-class", size: "25" }}
+                  >
+                    <>
+                      <MdDelete />
+                    </>
+                  </IconContext.Provider>
                 </button>
               </td>
             </tr>

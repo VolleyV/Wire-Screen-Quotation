@@ -4,6 +4,8 @@ import InputInfo from "./Components/InputInfo";
 import SlidingWindow from "./Components/SlidingWindow";
 import CheckBox from "./Components/CheckBox"; // Keep import for CheckBox
 
+
+
 export default function Home() {
   const [formData, setFormData] = useState({
     // **Moved formData state here**

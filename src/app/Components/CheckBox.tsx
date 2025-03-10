@@ -112,7 +112,7 @@ const CheckBox: React.FC<CheckBoxProps> = ({
         </div> */}
         </div>
         {/* Additional inputbox */}
-        <div className="w-full w-9/12 px-4">
+        <div className="w-10/12 px-4">
           <div className="mb-2">
             <label
               htmlFor="discountPercentage"
