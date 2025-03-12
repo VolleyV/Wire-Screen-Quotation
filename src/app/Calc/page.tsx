@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { FaRegFilePdf } from "react-icons/fa6";
 import { IconContext } from "react-icons/lib";
 import { FaPen } from "react-icons/fa";
-import { ToastContainer, toast, } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 
 interface SlidingWindowData {
   id: number;
@@ -54,7 +54,9 @@ const Page = () => {
     console.log("previewQuotation function called"); // 1. Log when function starts
     for (const row of slidingWindowData) {
       const priceValue = row.price;
-      console.log(`Checking price for row type: ${row.type}, price: ${priceValue}`); // 2. Log price being checked
+      console.log(
+        `Checking price for row type: ${row.type}, price: ${priceValue}`
+      ); // 2. Log price being checked
       if (priceValue === "N/A" || priceValue === null || priceValue === "") {
         console.log("Invalid price found!"); // 3. Log when invalid price condition is met
         toast.warn("Please enter price for all items before downloading PDF", {
@@ -146,7 +148,7 @@ const Page = () => {
         <tbody>
           {slidingWindowData.map((row, index) => {
             const totalPrice =
-              row.price && row.qty
+              row.price != null && row.qty
                 ? Number(row.price) * Number(row.qty)
                 : "N/A";
             const isEditing = editingRowIndex === index; // Check if this row is being edited

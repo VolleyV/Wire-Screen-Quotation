@@ -7,12 +7,19 @@ interface InputInfoProps {
   // Define props for InputInfo
   formData: any; // Or be more specific with your formData type
   handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  setFormData: React.Dispatch<React.SetStateAction<any>>;
 }
 
 const InputInfo: React.FC<InputInfoProps> = ({
   formData,
   handleInputChange,
+  setFormData,
 }) => {
+  console.log("InputInfo Component Rendered:"); // Indicate component render
+  console.log("  formData prop:", formData); // Log formData prop
+  console.log("  handleInputChange prop:", handleInputChange); // Log handleInputChange prop
+  console.log("  setFormData prop:", setFormData); // Log setFormData prop
+  console.log("  Is setFormData a function?", typeof setFormData === 'function'); // Check if it's a function
   // Receive props
   const router = useRouter(); // Initialize useRouter
 
@@ -23,6 +30,29 @@ const InputInfo: React.FC<InputInfoProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // No submit action needed here, data is saved on change
+  };
+  const handleReset = () => {
+    // **CORRECTED LINE: Call setFormData, NOT formData**
+    setFormData({
+      attention: '',
+      company: '',
+      address: '',
+      place: '',
+      project: '',
+      phone: '',
+      quote: '',
+      includeInstallationCost: false,
+      includeShippingCost: false,
+      includeVAT: false,
+      includeValueAddedTax: false,
+      add5PercentDiscount: false,
+      deduct20PercentNonStill: false,
+      discountPercentage: '',
+      discountAmount: '',
+      shippingAmount: '',
+      installationAmount: '',
+      vatDiscountAmount: '',
+    });
   };
   const handleSaveHistory = async () => {
     try {
@@ -155,6 +185,13 @@ const InputInfo: React.FC<InputInfoProps> = ({
             />
           </div>
           <div className="flex justify-center w-full md:w-2/12 px-2">
+          <button
+              type="button" // type="button" is important to prevent form submission
+              className="bg-red-500 text-white px-4 py-2 rounded mt-5 ml-4 mr-4 justify-items-end"
+              onClick={handleReset} // Call handleSaveHistory on click
+            >
+              เคลียร์
+            </button>
             <button
               type="button" // type="button" is important to prevent form submission
               className="bg-green-500 text-white px-4 py-2 rounded mt-5 justify-items-end"

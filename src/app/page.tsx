@@ -1,41 +1,44 @@
-"use client"; // Make sure this is client component if you are using client-side features like useState
-import React, { useState } from "react"; // Import useState
+"use client";
+import React, { useState } from "react";
 import InputInfo from "./Components/InputInfo";
 import SlidingWindow from "./Components/SlidingWindow";
-import CheckBox from "./Components/CheckBox"; // Keep import for CheckBox
-
+import CheckBox from "./Components/CheckBox";
+import { useSearchParams } from 'next/navigation'; // **Import useSearchParams**
 
 
 export default function Home() {
-  const [formData, setFormData] = useState({
-    // **Moved formData state here**
-    attention: "",
-    company: "",
-    address: "",
-    place: "",
-    project: "",
-    phone: "",
-    quote: "",
-    includeInstallationCost: false,
+  const searchParams = useSearchParams(); // **Use useSearchParams hook**
+
+  // Initialize formData from search params OR default empty values
+  const initialFormData = {
+    attention: searchParams.get('attention') || '',
+    company: searchParams.get('company') || '',
+    address: searchParams.get('address') || '',
+    place: searchParams.get('place') || '',
+    project: searchParams.get('project') || '',
+    phone: searchParams.get('phone') || '',
+    quote: searchParams.get('quote') || '',
+    includeInstallationCost: false, // Keep default boolean values
     includeShippingCost: false,
     includeVAT: false,
     includeValueAddedTax: false,
     add5PercentDiscount: false,
     deduct20PercentNonStill: false,
-    discountPercentage: "",
-    discountAmount: "",
-    shippingAmount: "",
-    installationAmount: "",
-    vatDiscountAmount: "",
-  });
+    discountPercentage: '', // Keep default empty strings for text inputs
+    discountAmount: '',
+    shippingAmount: '',
+    installationAmount: '',
+    vatDiscountAmount: '',
+    slidingWindowData: [],
+  };
+
+  const [formData, setFormData] = useState(initialFormData);
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // **Moved handleCheckboxChange here**
     setFormData({ ...formData, [event.target.name]: event.target.checked });
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // **Moved handleInputChange here**
     setFormData({ ...formData, [event.target.name]: event.target.value });
   };
 
@@ -45,16 +48,16 @@ export default function Home() {
         <h1 className="text-4xl text-center font-bold">Vignet</h1>
       </div>
       <InputInfo
-        formData={formData} // **Pass formData prop to InputInfo**
-        handleInputChange={handleInputChange} // **Pass handleInputChange prop to InputInfo**
-        // **You can choose NOT to pass handleCheckboxChange to InputInfo if you only want checkboxes in CheckBox component**
+        formData={formData}
+        handleInputChange={handleInputChange}
+        setFormData={setFormData} 
       />
       <div className="mt-5 text-2xl text-starts">รายการสินค้า</div>
-      <SlidingWindow /> {/* Assuming you render SlidingWindow here */}
+      <SlidingWindow />
       <CheckBox
-        formData={formData} // **Pass formData prop to CheckBox**
-        handleCheckboxChange={handleCheckboxChange} // **Pass handleCheckboxChange prop to CheckBox**
-        handleInputChange={handleInputChange} // **Pass handleInputChange prop to CheckBox**
+        formData={formData}
+        handleCheckboxChange={handleCheckboxChange}
+        handleInputChange={handleInputChange}
       />
     </div>
   );

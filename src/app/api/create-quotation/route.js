@@ -99,10 +99,10 @@ export async function POST(request) {
         doc.line(20, 85, 195, 85); // x1, y1, x2, y2
 
         // --- 6. Product Table Headers (Same as before) ---
-        const headers = ["Series", "Description", "W", "H", "Qty.", "Price/Unit\n(THB)", "Total\n(THB)"]; // Modified Headers
+        const headers = ["code","Series", "Description", "W", "H", "Qty.", "Price/Unit\n(THB)", "Total\n(THB)"]; // Modified Headers
         let tableY = 95; // Start Y for table
         let tableX = 5;
-        const cellWidths = [20, 70, 20, 20, 20, 25, 25, 25]; // Adjusted Column Widths
+        const cellWidths = [20, 20, 50, 20, 20, 20, 25, 25, 25]; // Adjusted Column Widths
 
         const addTableCell = (doc, text, x, y, width, height = 10, isHeader = false, align = 'center', isPrice = false) => { // **Added isPrice parameter**
             doc.rect(x, y, width, height);
@@ -143,8 +143,9 @@ export async function POST(request) {
             const totalPrice = item.price && item.qty ? Number(item.price) * Number(item.qty) : 0; // Ensure totalPrice is a number
             const rowData = [
                 /* item.id, */
+                item.id,
+                "SL5000",
                 item.type,
-                "ประตูหน้าต่างไวนิล (uPVC)",
                 item.width,
                 item.height,
                 item.qty,
