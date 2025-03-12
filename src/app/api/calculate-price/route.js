@@ -57,7 +57,7 @@ export async function GET(request) {
         price=10000;}
       else price=areaSqMeters*4000;
     }
-    else return "ไม่มีสินค้านี้";
+    else return NextResponse.json({ error: "ไม่มีสินค้านี้" }, { status: 404 });
     // Calculate price (70 Baht per square meter)
     //const price = areaSqMeters * 70;
 
