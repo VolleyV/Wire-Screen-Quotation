@@ -1,15 +1,14 @@
 "use client";
-import React, { useState } from "react";
+
+import React, { useState, Suspense } from "react";
 import InputInfo from "./Components/InputInfo";
 import SlidingWindow from "./Components/SlidingWindow";
 import CheckBox from "./Components/CheckBox";
 import { useSearchParams } from 'next/navigation'; // **Import useSearchParams**
 
+function HomeContent() {
+  const searchParams = useSearchParams(); // ✅ Use inside Suspense
 
-export default function Home() {
-  const searchParams = useSearchParams(); // **Use useSearchParams hook**
-
-  // Initialize formData from search params OR default empty values
   const initialFormData = {
     attention: searchParams.get('attention') || '',
     company: searchParams.get('company') || '',
@@ -18,13 +17,13 @@ export default function Home() {
     project: searchParams.get('project') || '',
     phone: searchParams.get('phone') || '',
     quote: searchParams.get('quote') || '',
-    includeInstallationCost: false, // Keep default boolean values
+    includeInstallationCost: false,
     includeShippingCost: false,
     includeVAT: false,
     includeValueAddedTax: false,
     add5PercentDiscount: false,
     deduct20PercentNonStill: false,
-    discountPercentage: '', // Keep default empty strings for text inputs
+    discountPercentage: '',
     discountAmount: '',
     shippingAmount: '',
     installationAmount: '',
@@ -60,5 +59,13 @@ export default function Home() {
         handleInputChange={handleInputChange}
       />
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <HomeContent />
+    </Suspense>
   );
 }
