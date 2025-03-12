@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import React, { useEffect, useState } from "react";
 import { FaRegFilePdf } from "react-icons/fa6";
@@ -50,7 +51,7 @@ const Page = () => {
     }
   }, []);
 
-  const previewQuotation = async (index: number) => {
+  const previewQuotation = async (_index: number) => {
     console.log("previewQuotation function called"); // 1. Log when function starts
     for (const row of slidingWindowData) {
       const priceValue = row.price;
@@ -108,7 +109,7 @@ const Page = () => {
     setSlidingWindowData(newSlidingWindowData);
   };
 
-  const handlePriceBlur = (index: number) => {
+  const handlePriceBlur = (_index: number) => {
     setEditingRowIndex(null); // Exit edit mode onBlur (when input loses focus)
   };
 
