@@ -2,6 +2,7 @@ import React from "react";
 
 interface CheckBoxProps {
   // Define an interface for the props
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   formData: any; //  It's better to be more specific with your formData type if possible.
   handleCheckboxChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;

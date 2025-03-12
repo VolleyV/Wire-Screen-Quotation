@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, {  useEffect } from "react";
 import { useRouter } from "next/navigation"; // Import useRouter for navigation
 import { toast } from "react-toastify";
 /* import CheckBox from "./CheckBox"; // **Import CheckBox component** */
