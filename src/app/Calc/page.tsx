@@ -206,7 +206,7 @@ const Page = () => {
       <div className="flex justify-start">
         <button
           className="bg-green-500 text-white px-4 py-2 rounded mt-5 flex items-center gap-2"
-          onClick={previewQuotation}
+          onClick={() => previewQuotation(0)}
         >
           <IconContext.Provider
             value={{ className: "shared-class", size: "20" }}
