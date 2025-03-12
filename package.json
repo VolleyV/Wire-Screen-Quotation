@@ -17,7 +17,6 @@
     "jspdf": "^2.5.2",
     "jspdf-autotable": "^3.8.4",
     "next": "15.1.6",
-    "next-auth": "^4.24.11",
     "pdfkit": "^0.16.0",
     "pdfmake": "^0.2.18",
     "pg": "^8.13.3",

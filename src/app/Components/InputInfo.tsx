@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation"; // Import useRouter for navigation
 import { toast } from "react-toastify";
-import CheckBox from "./CheckBox"; // **Import CheckBox component**
+/* import CheckBox from "./CheckBox"; // **Import CheckBox component** */
 
 interface InputInfoProps {
   // Define props for InputInfo

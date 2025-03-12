@@ -71,8 +71,7 @@ const SlidingWindow = () => {
     { label: "ช่องแสง (F)", value: "F" },
   ];
 
-  const [mlHeaderChecked, setMlHeaderChecked] = useState(false);
-  const [slHeaderChecked, setSlHeaderChecked] = useState(false);
+
   /*   const glassOptions = [
     { label: "Select Glass", value: "" },
     { label: "W2 (W6000 x H3200)", value: "W2" },
@@ -170,7 +169,7 @@ const SlidingWindow = () => {
     const row = slidingWindow[index];
 
     if (!row.width || !row.height) return;
-    const validTypes = ["W2", "Demo", "Type3", "Type4", "Type5", "F"]; // Allowed types
+  /*   const validTypes = ["W2", "Demo", "Type3", "Type4", "Type5", "F"]; // Allowed types */
 
     /* if (!validTypes.includes(row.type)) {
       toast.error(`ไม่สามารถคำนวณราคาได้สำหรับ Type: ${row.type}`);
