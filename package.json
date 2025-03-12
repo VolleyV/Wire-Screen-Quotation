@@ -12,6 +12,7 @@
     "@supabase/supabase-js": "^2.48.1",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
+    "cookie": "^1.0.2",
     "dotenv": "^16.4.7",
     "html-pdf-node": "^1.0.8",
     "jspdf": "^2.5.2",
