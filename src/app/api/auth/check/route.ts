@@ -8,7 +8,7 @@ import { cookies } from 'next/headers';
 //const supabase = createClient(supabaseUrl, supabaseAnonKey); // Not needed
 
 export async function GET() {
-    const sessionToken = await cookies().get('sessionToken');
+    const sessionToken = await (await cookies()).get('sessionToken');
     console.log("Session Token in /api/auth/check:", sessionToken);
 
     let isValidSession = false; // Default to invalid
@@ -23,7 +23,9 @@ export async function GET() {
         return NextResponse.json({ authenticated: true, message: 'Session is valid' }, { status: 200 });
     } else {
         // Clear the invalid session cookie (optional, but good practice)
-        cookies().delete('sessionToken');
+        (await
+            // Clear the invalid session cookie (optional, but good practice)
+            cookies()).delete('sessionToken');
         return NextResponse.json({ authenticated: false, message: 'Session is invalid' }, { status: 401 });
     }
 }
