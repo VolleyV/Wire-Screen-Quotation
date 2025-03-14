@@ -1,4 +1,4 @@
-// app/api/auth/check/route.ts
+// app/api/auth/check/route.ts (Corrected - Removed redundant await)
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 //import { createClient } from '@supabase/supabase-js'; // No Supabase client needed here anymore
@@ -8,7 +8,7 @@ import { cookies } from 'next/headers';
 //const supabase = createClient(supabaseUrl, supabaseAnonKey); // Not needed
 
 export async function GET() {
-    const sessionToken = await (await cookies()).get('sessionToken');
+    const sessionToken = await cookies().get('sessionToken'); // Corrected - Await once
     console.log("Session Token in /api/auth/check:", sessionToken);
 
     let isValidSession = false; // Default to invalid
@@ -23,9 +23,7 @@ export async function GET() {
         return NextResponse.json({ authenticated: true, message: 'Session is valid' }, { status: 200 });
     } else {
         // Clear the invalid session cookie (optional, but good practice)
-        (await
-            // Clear the invalid session cookie (optional, but good practice)
-            cookies()).delete('sessionToken');
+        await cookies().delete('sessionToken'); // Corrected - Await once
         return NextResponse.json({ authenticated: false, message: 'Session is invalid' }, { status: 401 });
     }
 }

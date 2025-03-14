@@ -34,6 +34,7 @@ export async function POST(req) {
         const passwordMatch = await bcrypt.compare(password, data.password_hash);
 
         if (passwordMatch) {
+            console.log("Setting simplified session cookie...");
             // **Custom Session Token Generation (Instead of signInWithPassword):**
             const sessionTokenValue = crypto.randomBytes(32).toString('hex'); // Generate a random token
             console.log("Generated Custom Session Token Value:", sessionTokenValue); // Log token value
@@ -52,7 +53,7 @@ export async function POST(req) {
             return new NextResponse(JSON.stringify({ success: true, message: 'Login successful' }), {
                 status: 200,
                 headers: {
-                    'Set-Cookie': serializedCookie,
+                    'Set-Cookie': `sessionToken=${sessionTokenValue}; HttpOnly; Path=/; SameSite=Strict`,
                     'Content-Type': 'application/json',
                 },
             });
