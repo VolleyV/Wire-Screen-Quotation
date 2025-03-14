@@ -1,33 +1,33 @@
 "use client";
 
-import React, { useState, Suspense } from "react";
+import React, { useState, Suspense, useEffect } from "react";
 import InputInfo from "./Components/InputInfo";
 import SlidingWindow from "./Components/SlidingWindow";
 import CheckBox from "./Components/CheckBox";
-import { useSearchParams } from 'next/navigation'; // **Import useSearchParams**
+import { useSearchParams, useRouter } from "next/navigation";
 
 function HomeContent() {
-  const searchParams = useSearchParams(); // ✅ Use inside Suspense
+  const searchParams = useSearchParams();
 
   const initialFormData = {
-    attention: searchParams.get('attention') || '',
-    company: searchParams.get('company') || '',
-    address: searchParams.get('address') || '',
-    place: searchParams.get('place') || '',
-    project: searchParams.get('project') || '',
-    phone: searchParams.get('phone') || '',
-    quote: searchParams.get('quote') || '',
+    attention: searchParams.get("attention") || "",
+    company: searchParams.get("company") || "",
+    address: searchParams.get("address") || "",
+    place: searchParams.get("place") || "",
+    project: searchParams.get("project") || "",
+    phone: searchParams.get("phone") || "",
+    quote: searchParams.get("quote") || "",
     includeInstallationCost: false,
     includeShippingCost: false,
     includeVAT: false,
     includeValueAddedTax: false,
     add5PercentDiscount: false,
     deduct20PercentNonStill: false,
-    discountPercentage: '',
-    discountAmount: '',
-    shippingAmount: '',
-    installationAmount: '',
-    vatDiscountAmount: '',
+    discountPercentage: "",
+    discountAmount: "",
+    shippingAmount: "",
+    installationAmount: "",
+    vatDiscountAmount: "",
     slidingWindowData: [],
   };
 
@@ -49,7 +49,7 @@ function HomeContent() {
       <InputInfo
         formData={formData}
         handleInputChange={handleInputChange}
-        setFormData={setFormData} 
+        setFormData={setFormData}
       />
       <div className="mt-5 text-2xl text-starts">รายการสินค้า</div>
       <SlidingWindow />
@@ -63,6 +63,33 @@ function HomeContent() {
 }
 
 export default function Home() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // State to track login status
+  const router = useRouter();
+
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      try {
+        const response = await fetch("/api/auth/check"); // Call API to check cookie
+        if (response.ok) {
+          setIsLoggedIn(true);
+        } else {
+          setIsLoggedIn(false);
+          router.push("/Login");
+        }
+      } catch (error) {
+        console.error("Error checking auth status:", error);
+        setIsLoggedIn(false); // Assume not logged in on error
+        router.push("/Login"); // Redirect to login on error
+      }
+    };
+
+    checkLoginStatus();
+  }, [router]);
+
+  if (!isLoggedIn) {
+    return <div>Redirecting to Login...</div>;
+  }
+
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <HomeContent />

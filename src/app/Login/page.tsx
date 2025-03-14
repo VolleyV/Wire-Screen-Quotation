@@ -33,12 +33,12 @@ export default function LoginPage() {
         const errorData = await response.json();
         setError(errorData.message || "Login failed.");
         return;
-      }
+      } 
 
       // Successful login (API route sets the cookie)
       console.log("Login successful! Redirecting to /");
       router.push("/"); // Redirect to dashboard
-      window.location.href = "/";
+      //window.location.href = "/";
     } catch (err) {
       console.error("Login error:", err);
       setError("Login failed. An unexpected error occurred.");
@@ -55,7 +55,7 @@ export default function LoginPage() {
         <form onSubmit={handleLogin} className="space-y-4"> {/* Form with vertical spacing */}
           <div>
             <label htmlFor="username" className="block text-gray-700 text-sm font-bold mb-2"> {/* Label styling */}
-              Username or Email
+              Username
             </label>
             <input
               type="text"

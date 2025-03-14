@@ -83,7 +83,7 @@ const CheckBox: React.FC<CheckBoxProps> = ({
             </label>
           </div>
           <div className="flex items-center mb-2">
-            <input
+          {/*   <input
               type="checkbox"
               id="add5PercentDiscount"
               name="add5PercentDiscount"
@@ -96,7 +96,7 @@ const CheckBox: React.FC<CheckBoxProps> = ({
               className="text-blueGray-600 text-sm"
             >
               บวก 5% ส่วนลด
-            </label>
+            </label> */}
           </div>
           {/*   <div className="flex items-center mb-2">
           <input

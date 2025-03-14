@@ -66,7 +66,7 @@ export async function POST(request) {
         // --- 3. Customer Information (Left Side - Dynamic from InputInfo) ---
         doc.setFontSize(10);
         doc.setFont('NotoSansThai', 'normal'); // Set font to NotoSansThai for customer info
-        let customerInfoX = 20;
+        let customerInfoX = 5;
         let customerInfoY = 65;
         doc.text(`Attn.`, customerInfoX, customerInfoY);
         doc.text(`${quotationFormData.attention || '-'}`, customerInfoX + 20, customerInfoY);
@@ -96,13 +96,13 @@ export async function POST(request) {
 
 
         // --- 5. Horizontal Line Separator ---
-        doc.line(20, 85, 195, 85); // x1, y1, x2, y2
+        doc.line(5, 85, 205, 85); // x1, y1, x2, y2
 
         // --- 6. Product Table Headers (Same as before) ---
         const headers = ["code","Series", "Description", "W", "H", "Qty.", "Price/Unit\n(THB)", "Total\n(THB)"]; // Modified Headers
         let tableY = 95; // Start Y for table
         let tableX = 5;
-        const cellWidths = [20, 20, 50, 20, 20, 20, 25, 25, 25]; // Adjusted Column Widths
+        const cellWidths = [20, 15, 65, 15, 15, 20, 25, 25, 25]; // Adjusted Column Widths
 
         const addTableCell = (doc, text, x, y, width, height = 10, isHeader = false, align = 'center', isPrice = false) => { // **Added isPrice parameter**
             doc.rect(x, y, width, height);
@@ -203,8 +203,8 @@ export async function POST(request) {
 
 
         //doc.setFont('Helvetica', 'bold');
-        doc.text(`ราคารวมหลังหักส่วนลด`, summaryX, summaryY, { align: 'right' }); // Discounted Subtotal Label
-        doc.text(`${discountedSubtotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, summaryAmountX, summaryY, { align: 'right' }); // Discounted Subtotal Amount
+        //doc.text(`ราคารวมหลังหักส่วนลด`, summaryX, summaryY, { align: 'right' }); // Discounted Subtotal Label
+        //doc.text(`${discountedSubtotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, summaryAmountX, summaryY, { align: 'right' }); // Discounted Subtotal Amount
         summaryY += 5;
         doc.setFont('NotoSansThai', 'normal');
 
@@ -219,6 +219,13 @@ export async function POST(request) {
             doc.text(`${shippingCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, summaryAmountX, summaryY, { align: 'right' });
             summaryY += 5;
         }
+        console.log("Vat:",quotationFormData.includeVAT);
+        if (quotationFormData.includeVAT) {
+            doc.text(`VAT 7%`, summaryX, summaryY, { align: 'right' });
+            doc.text(`${vatAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, summaryAmountX, summaryY, { align: 'right' });
+            summaryY += 5;
+
+        }
 
 
         //doc.setFont('Helvetica', 'bold');
@@ -226,12 +233,12 @@ export async function POST(request) {
         doc.text(`${(discountedSubtotal + installationCost + shippingCost).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, summaryAmountX, summaryY, { align: 'right' });
         summaryY += 5;
         //doc.setFont('Helvetica', 'normal');
-        doc.text(`VAT 7%`, summaryX, summaryY, { align: 'right' });
-        doc.text(`${vatAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, summaryAmountX, summaryY, { align: 'right' });
+        //doc.text(`VAT 7%`, summaryX, summaryY, { align: 'right' });
+        //doc.text(`${vatAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, summaryAmountX, summaryY, { align: 'right' });
         summaryY += 5;
         //doc.setFont('Helvetica', 'bold');
-        doc.text(`ราคารวม VAT`, summaryX, summaryY, { align: 'right' });
-        doc.text(`${totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, summaryAmountX, summaryY, { align: 'right' });
+        //doc.text(`ราคารวม VAT`, summaryX, summaryY, { align: 'right' });
+        //doc.text(`${totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, summaryAmountX, summaryY, { align: 'right' });
         doc.setFont('Helvetica', 'normal');
 
         // --- 9. "หมายเหตุ" (Notes) Section (Bottom Left - Same Notes) ---

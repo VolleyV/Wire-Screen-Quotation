@@ -32,28 +32,28 @@ export async function GET(request) {
     // Calculate area in square meters
     const areaSqMeters = widthMeters * heightMeters;
     if(type==="หน้าต่างบานเลื่อนสลับ (2P,2T)"){
-      if(areaSqMeters>0&&areaSqMeters<0.6){
+      if(areaSqMeters>0&&areaSqMeters<=0.6){
         price=4000;
       }
-      else if(areaSqMeters>0.6&&areaSqMeters<0.8){
+      else if(areaSqMeters>0.6&&areaSqMeters<=1){
       price=5000;
       }
-      else if(areaSqMeters>0.8&&areaSqMeters<1.44){  
+      else if(areaSqMeters>1&&areaSqMeters<=1.44){  
         price=5500;
       }
       else price=areaSqMeters*4000;
     }
-    else if(type==="หน้าต่างบานเลื่อนสลับ (3P,3T)"||type==="4P2T"){
-      if(areaSqMeters>0&&areaSqMeters<2){
+    else if(type==="หน้าต่างบานเลื่อนสลับ (3P,3T)"||type==="หน้าต่างบานเลื่อนสลับ (4P,2T)"){
+      if(areaSqMeters>0&&areaSqMeters<=2){
         price=8000;
       }
-      else if(areaSqMeters>2&&areaSqMeters<2.4){
+      else if(areaSqMeters>2&&areaSqMeters<=2.4){
       price=9000;
       }
-      else if(areaSqMeters>2.4&&areaSqMeters<2.64){  
+      else if(areaSqMeters>2.4&&areaSqMeters<=2.64){  
         price=10000;
       }
-      else if(areaSqMeters>2.64&&areaSqMeters<2.88){  
+      else if(areaSqMeters>2.64&&areaSqMeters<=2.88){  
         price=10000;}
       else price=areaSqMeters*4000;
     }
