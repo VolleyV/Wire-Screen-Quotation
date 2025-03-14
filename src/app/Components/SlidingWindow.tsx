@@ -55,7 +55,6 @@ const SlidingWindow = () => {
   const windowTypes = [
     { label: "Select Type", value: "" },
     { label: "W2 (W6000 x H3200)", value: "W2" },
-    { label: "Demo", value: "Demo" },
     {
       label: "หน้าต่างบานเลื่อนสลับ (2P,2T)",
       value: "หน้าต่างบานเลื่อนสลับ (2P,2T)",
@@ -71,12 +70,11 @@ const SlidingWindow = () => {
     { label: "ช่องแสง (F)", value: "F" },
   ];
 
-
-  /*   const glassOptions = [
+  const glassOptions = [
     { label: "Select Glass", value: "" },
-    { label: "W2 (W6000 x H3200)", value: "W2" },
-    { label: "Demo", value: "Demo" },
-  ]; */
+    { label: "Tempered Glass ", value: "Tempered Glass " },
+    { label: "Laminated Glass ", value: "Laminated Glass " },
+  ];
 
   const handleInputChange = (
     index: number,
@@ -169,7 +167,7 @@ const SlidingWindow = () => {
     const row = slidingWindow[index];
 
     if (!row.width || !row.height) return;
-  /*   const validTypes = ["W2", "Demo", "Type3", "Type4", "Type5", "F"]; // Allowed types */
+    /*   const validTypes = ["W2", "Demo", "Type3", "Type4", "Type5", "F"]; // Allowed types */
 
     /* if (!validTypes.includes(row.type)) {
       toast.error(`ไม่สามารถคำนวณราคาได้สำหรับ Type: ${row.type}`);
@@ -292,34 +290,42 @@ const SlidingWindow = () => {
                   }
                   className="border rounded px-2 py-1 w-full"
                 >
-                  <option value="">Select Glass</option>
-                  <option value="W2">W2 (W6000 x H3200)</option>
-                  <option value="Demo">Demo</option>
+                  {glassOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
                 </select>
               </td>
               <td className="border border-gray-300 px-4 py-2 text-center">
-              <div className="flex justify-center"> {/* Added justify-center to center the content horizontally */}
-  <div className="flex">
-    <div className="flex flex-col items-center mr-4">
-      <span>ML</span>
-      <input
-        type="checkbox"
-        checked={row.ml}
-        onChange={(e) => handleInputChange(index, "ml", e.target.checked)}
-        className="form-checkbox h-5 w-5"
-      />
-    </div>
-    <div className="flex flex-col items-center">
-      <span>SL</span>
-      <input
-        type="checkbox"
-        checked={row.sl}
-        onChange={(e) => handleInputChange(index, "sl", e.target.checked)}
-        className="form-checkbox h-5 w-5"
-      />
-    </div>
-  </div>
-</div>
+                <div className="flex justify-center">
+                  {" "}
+                  {/* Added justify-center to center the content horizontally */}
+                  <div className="flex">
+                    <div className="flex flex-col items-center mr-4">
+                      <span>ML</span>
+                      <input
+                        type="checkbox"
+                        checked={row.ml}
+                        onChange={(e) =>
+                          handleInputChange(index, "ml", e.target.checked)
+                        }
+                        className="form-checkbox h-5 w-5"
+                      />
+                    </div>
+                    <div className="flex flex-col items-center">
+                      <span>SL</span>
+                      <input
+                        type="checkbox"
+                        checked={row.sl}
+                        onChange={(e) =>
+                          handleInputChange(index, "sl", e.target.checked)
+                        }
+                        className="form-checkbox h-5 w-5"
+                      />
+                    </div>
+                  </div>
+                </div>
               </td>
               <td className="border border-gray-300 px-4 py-2 w-28">
                 <input

@@ -9,6 +9,8 @@ import { ToastContainer, toast } from "react-toastify";
 interface SlidingWindowData {
   id: number;
   type: string;
+  ml: string;
+  sl: string;
   glass: string;
   width: number;
   height: number;
