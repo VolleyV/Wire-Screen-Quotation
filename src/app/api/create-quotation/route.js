@@ -183,7 +183,7 @@ export async function POST(request) {
 
 
         let vatAmount = discountedSubtotal * vatRate + installationCost * vatRate + shippingCost * vatRate; // VAT on discounted subtotal
-        let totalAmount = discountedSubtotal + installationCost + shippingCost + vatAmount; // Total on discounted subtotal
+        //let totalAmount = discountedSubtotal + installationCost + shippingCost + vatAmount; // Total on discounted subtotal
 
         doc.setFontSize(10);
         doc.text(`ราคารวมค่าสินค้า`, summaryX, summaryY, { align: 'right' });
